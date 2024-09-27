@@ -9,7 +9,7 @@ import {
   AdminLayout,
   UserAuthLayout,
   UserShoppingLayout,
-  UserShoppingHeader,
+  CheckAuth,
 } from "./components";
 import {
   AdminOrders,
@@ -17,31 +17,68 @@ import {
   Register,
   AdminDashboard,
   AdminProducts,
-} from "./pages/index.js";
+  ShoppingAccount,
+  ShoppingCheckout,
+  Shoppinglisting,
+  ShoppingHome,
+  UnAuth,
+  NotFound,
+} from "./pages";
 
 function App() {
+  const isAuthenticated = true;
+  const user = {
+    name: "sam",
+    role: "user",
+  };
+
   const router = createBrowserRouter(
     createRoutesFromElements(
       <>
-        <Route path="/auth" element={<UserAuthLayout />}>
+        <Route
+          path="/auth"
+          element={
+            <CheckAuth props={{ isAuthenticated, user }}>
+              <UserAuthLayout />
+            </CheckAuth>
+          }
+        >
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
         </Route>
-        <Route path="/admin" element={<AdminLayout />}>
+        <Route
+          path="/admin"
+          element={
+            <CheckAuth props={{ isAuthenticated, user }}>
+              <AdminLayout />
+            </CheckAuth>
+          }
+        >
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="products" element={<AdminProducts />} />
           <Route path="orders" element={<AdminOrders />} />
         </Route>
-        <Route path="/shop" element={<UserShoppingLayout />}>
-          <Route path="dashboard" element={<UserShoppingHeader />} />
+        <Route
+          path="/shop"
+          element={
+            <CheckAuth props={{ isAuthenticated, user }}>
+              <UserShoppingLayout />
+            </CheckAuth>
+          }
+        >
+          <Route path="home" element={<ShoppingHome />} />
+          <Route path="listing" element={<Shoppinglisting />} />
+          <Route path="checkout" element={<ShoppingCheckout />} />
+          <Route path="account" element={<ShoppingAccount />} />
         </Route>
+        <Route path="*" element={<NotFound />} />
+        <Route path="/unauth" element={<UnAuth />} />
       </>
     )
   );
   return (
     <>
       <div className="flex flex-col overflow-hidden bg-white">
-        <h1>Header</h1>
         <RouterProvider router={router} />
       </div>
     </>
