@@ -26,11 +26,8 @@ import {
 } from "./pages";
 
 function App() {
-  const isAuthenticated = true;
-  const user = {
-    name: "sam",
-    role: "user",
-  };
+  const isAuthenticated = false;
+  const user = null;
 
   const router = createBrowserRouter(
     createRoutesFromElements(
