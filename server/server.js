@@ -1,7 +1,8 @@
-import express from "express";
-import mongoose from "mongoose";
-import cookieParser from "cookie-parser";
-import cors from "cors";
+const express = require("express");
+const mongoose = require("mongoose");
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
+const authRouter = require("./routes/auth/auth-routes");
 const PORT = process.env.PORT || 8000;
 
 mongoose
@@ -17,6 +18,7 @@ const app = express();
 
 app.use(cookieParser());
 app.use(express.json());
+app.use("/api/auth", authRouter);
 app.use(
   cors({
     origin: "http://localhost:5175/",
