@@ -16,12 +16,9 @@ mongoose
 
 const app = express();
 
-app.use(cookieParser());
-app.use(express.json());
-app.use("/api/auth", authRouter);
 app.use(
   cors({
-    origin: "http://localhost:5175/",
+    origin: "http://localhost:5176",
     methods: ["GET", "POST", "DELETE", "PUT"],
     allowedHeaders: [
       "Content-Type",
@@ -33,5 +30,8 @@ app.use(
     credentials: true,
   })
 );
+app.use(cookieParser());
+app.use(express.json());
+app.use("/api/auth", authRouter);
 
 app.listen(PORT, () => console.log(`Server started - ${PORT}`));
