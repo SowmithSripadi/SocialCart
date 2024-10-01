@@ -1,8 +1,11 @@
 import Commonform from "@/components/common/form";
 import { registerFromControls } from "@/config";
+import { useToast } from "@/hooks/use-toast";
+import { registerUser } from "@/store/Userauth-slice";
 import React from "react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 const initialState = {
   userName: "",
   email: "",
@@ -11,7 +14,28 @@ const initialState = {
 
 function Register() {
   const [formData, setFormData] = useState(initialState);
-  const onSubmit = () => {};
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const onSubmit = (e) => {
+    e.preventDefault();
+    dispatch(registerUser(formData)).then((data) => {
+      if (data?.payload?.success) {
+        toast({
+          title: data?.payload?.message,
+        });
+        navigate("/auth/login");
+      } else if (!data?.payload?.success) {
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: "There was a problem with your request.",
+          action: <ToastAction altText="Try again">Try again</ToastAction>,
+        });
+      }
+      console.log(data);
+    });
+  };
 
   return (
     <div className="mx-uto w-full max-w-full space-y-6">
