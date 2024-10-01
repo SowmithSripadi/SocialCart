@@ -1,6 +1,7 @@
 import Commonform from "@/components/common/form";
 import { registerFromControls } from "@/config";
 import { useToast } from "@/hooks/use-toast";
+import { ToastAction } from "@radix-ui/react-toast";
 import { registerUser } from "@/store/Userauth-slice";
 import React from "react";
 import { useState } from "react";
@@ -28,8 +29,8 @@ function Register() {
       } else if (!data?.payload?.success) {
         toast({
           variant: "destructive",
-          title: "Uh oh! Something went wrong.",
-          description: "There was a problem with your request.",
+          title: data.payload.message,
+          description: "Please try logging in or use a different email.",
           action: <ToastAction altText="Try again">Try again</ToastAction>,
         });
       }

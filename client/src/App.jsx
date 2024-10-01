@@ -24,10 +24,10 @@ import {
   UnAuth,
   NotFound,
 } from "./pages";
+import { useSelector } from "react-redux";
 
 function App() {
-  const isAuthenticated = false;
-  const user = null;
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
 
   const router = createBrowserRouter(
     createRoutesFromElements(
