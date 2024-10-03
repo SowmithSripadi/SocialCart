@@ -3,7 +3,7 @@ import axios from "axios";
 
 const initialState = {
   isAuthenticated: false,
-  isLoading: false,
+  isLoading: true,
   user: null,
 };
 
@@ -32,6 +32,23 @@ export const loginUser = createAsyncThunk("/auth/login", async (formData) => {
   return response.data;
 });
 
+export const checkIfUserLoggedIn = createAsyncThunk(
+  "/auth/checkuser",
+  async () => {
+    const response = await axios.get(
+      "http://localhost:8000/api/auth/checkuser",
+      {
+        withCredentials: true,
+        headers: {
+          "Cache-Control":
+            "no-store, no-cache, must-revalidate, proxy-revalidate",
+        },
+      }
+    );
+    return response.data;
+  }
+);
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -57,13 +74,24 @@ const authSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
-        console.log(action);
-
         (state.isLoading = false),
           (state.user = action.payload.success ? action.payload.user : null),
           (state.isAuthenticated = action.payload.success);
       })
       .addCase(loginUser.rejected, (state, action) => {
+        (state.isLoading = false),
+          (state.user = null),
+          (state.isAuthenticated = false);
+      })
+      .addCase(checkIfUserLoggedIn.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(checkIfUserLoggedIn.fulfilled, (state, action) => {
+        (state.isLoading = false),
+          (state.user = action.payload.success ? action.payload.user : null),
+          (state.isAuthenticated = action.payload.success);
+      })
+      .addCase(checkIfUserLoggedIn.rejected, (state, action) => {
         (state.isLoading = false),
           (state.user = null),
           (state.isAuthenticated = false);

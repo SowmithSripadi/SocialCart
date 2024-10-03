@@ -3,8 +3,8 @@ import { useLocation, Navigate } from "react-router-dom";
 
 function CheckAuth({ props, children }) {
   const { isAuthenticated, user } = props;
-
   const location = useLocation();
+
   if (
     !isAuthenticated &&
     !location.pathname.includes("/login") &&

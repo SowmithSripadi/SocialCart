@@ -24,11 +24,20 @@ import {
   UnAuth,
   NotFound,
 } from "./pages";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { checkIfUserLoggedIn } from "./store/Userauth-slice/index";
 
 function App() {
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const { isAuthenticated, user, isLoading } = useSelector(
+    (state) => state.auth
+  );
+  const dispatch = useDispatch();
 
+  useEffect(() => {
+    dispatch(checkIfUserLoggedIn());
+  }, [dispatch]);
+  if (isLoading) return <div>Loading...</div>;
   const router = createBrowserRouter(
     createRoutesFromElements(
       <>

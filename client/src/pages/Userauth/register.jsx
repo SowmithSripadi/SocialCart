@@ -18,6 +18,7 @@ function Register() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { toast } = useToast();
+
   const onSubmit = (e) => {
     e.preventDefault();
     dispatch(registerUser(formData)).then((data) => {
