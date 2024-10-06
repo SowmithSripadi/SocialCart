@@ -61,6 +61,7 @@ function Register() {
         formData={formData}
         setFormData={setFormData}
         onSubmit={onSubmit}
+        className={"flex justify-center"}
       />
     </div>
   );

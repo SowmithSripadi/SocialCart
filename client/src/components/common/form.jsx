@@ -5,8 +5,10 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@radix-ui/react-select";
+  Select,
+} from "../ui/select";
 import { Button } from "../ui/button";
+import { Textarea } from "../ui/textarea";
 
 function Commonform({
   formControls,
@@ -14,12 +16,12 @@ function Commonform({
   setFormData,
   onSubmit,
   buttonText,
+  className = null,
 }) {
   const renderInputsbyComponents = (controlItem) => {
     let element = null;
     const value = formData[controlItem.name] || "";
-
-    switch (controlItem.commonType) {
+    switch (controlItem.componentType) {
       case "input":
         element = (
           <Input
@@ -39,7 +41,7 @@ function Commonform({
         break;
       case "select":
         element = (
-          <select
+          <Select
             onValueChange={() =>
               setFormData({
                 ...formData,
@@ -49,19 +51,18 @@ function Commonform({
             value={value}
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder={controlItem.placeholder} />
+              <SelectValue placeholder={controlItem.label} />
             </SelectTrigger>
             <SelectContent>
               {controlItem.options && controlItem.options.length > 0
                 ? controlItem.options.map((optionItem) => (
-                    <SelectItem
-                      key={optionItem.id}
-                      value={optionItem.id}
-                    ></SelectItem>
+                    <SelectItem key={optionItem.id} value={optionItem.id}>
+                      {optionItem.label}
+                    </SelectItem>
                   ))
                 : null}
             </SelectContent>
-          </select>
+          </Select>
         );
         break;
       case "textarea":
@@ -103,19 +104,18 @@ function Commonform({
 
   return (
     <form onSubmit={onSubmit}>
-      <div className="flex justify-center">
-        <div>
-          <div className="flex flex-col gap-3">
-            {formControls.map((controlItem) => (
-              <div
-                className="grid w-full gap-1.5 flex-none"
-                key={controlItem.name}
-              >
-                <label className="mb-1 font-bold">{controlItem.label}</label>
-                {renderInputsbyComponents(controlItem)}
-              </div>
-            ))}
-          </div>
+      <div className={`${className}`}>
+        <div className="flex flex-col gap-3">
+          {formControls.map((controlItem) => (
+            <div
+              className="grid w-full gap-1.5 flex-none"
+              key={controlItem.name}
+            >
+              <label className="mb-1 font-bold">{controlItem.label}</label>
+              {renderInputsbyComponents(controlItem)}
+            </div>
+          ))}
+
           <Button type="submit" className="block mx-auto mt-8 w-1/2">
             {buttonText || "Submit"}
           </Button>
