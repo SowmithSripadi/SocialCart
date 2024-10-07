@@ -26,7 +26,13 @@ function AdminProducts() {
       </div>
       <div className="grid grid-4 md:grid-cols-3 lg:grid-cols-4"></div>
       <Sheet open={openCreateProducts} onOpenChange={setopenCreateProducts}>
-        <SheetContent side="right">
+        <SheetContent
+          side="right"
+          style={{
+            maxHeight: "100vh", // Limit height to the viewport height
+            overflowY: "auto", // Enable vertical scrolling
+          }}
+        >
           <SheetHeader>
             <SheetTitle className="text-xl mt-3 text-center">
               Add New Product
