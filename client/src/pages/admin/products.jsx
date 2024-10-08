@@ -27,6 +27,7 @@ function AdminProducts() {
       <div className="grid grid-4 md:grid-cols-3 lg:grid-cols-4"></div>
       <Sheet open={openCreateProducts} onOpenChange={setopenCreateProducts}>
         <SheetContent
+          aria-describedby={null}
           side="right"
           style={{
             maxHeight: "100vh", // Limit height to the viewport height
