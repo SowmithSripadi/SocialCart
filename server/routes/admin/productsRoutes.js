@@ -2,23 +2,20 @@ const express = require("express");
 
 const {
   handleImageUpload,
+  addProduct,
+  fetchProducts,
+  editProduct,
+  deleteProdcut,
 } = require("../../controllers/admin/products-controller");
 
 const { uploads } = require("../../config/cloudinary");
 
 const router = express.Router();
 
-router.post(
-  "/uploadImage",
-  (req, res, next) => {
-    console.log("POST request received at /uploadImage");
-    next(); // Pass control to multer for file handling
-  },
-  uploads.single("myFile"),
-  (req, res) => {
-    console.log("File upload processed by multer.");
-    handleImageUpload(req, res); // Call the actual handler after multer processes the file
-  }
-);
+router.post("/uploadImage", uploads.single("myFile"), handleImageUpload);
+router.post("/add", addProduct);
+router.put("/edit/:id", editProduct);
+router.delete("/delete/:id", deleteProdcut);
+router.get("/get", fetchProducts);
 
 module.exports = router;

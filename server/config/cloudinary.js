@@ -14,7 +14,6 @@ async function imageUploadUtility(file) {
     resource_type: "auto",
   });
 
-  console.log(result);
   return result;
 }
 
