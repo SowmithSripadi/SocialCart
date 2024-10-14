@@ -5,18 +5,51 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { addProductFormElements } from "../../config/index";
 import Commonform from "@/components/common/form";
 import ProductImageUpload from "../../components/admin/imageUpload";
+import { useDispatch, useSelector } from "react-redux";
+import { addNewProduct, fetchAllProducts } from "@/store/admin/products-slice";
+
+const initialFormData = {
+  image: null,
+  title: "",
+  description: "",
+  category: "",
+  brand: "",
+  price: "",
+  salesPrice: "",
+  totalStock: "",
+};
 
 function AdminProducts() {
   const [openCreateProducts, setopenCreateProducts] = useState(false);
-  const [formData, setFormData] = useState("");
+  const [formData, setFormData] = useState(initialFormData);
   const [imageFile, setImageFile] = useState(null);
   const [uploadedImageURL, setUploadedImageURL] = useState("");
+  const [imageLoadingState, setimageLoadingState] = useState(false);
+  const { productList } = useSelector((state) => state.adminProducts);
+  const dispatch = useDispatch();
 
-  const onSubmit = () => {};
+  const onSubmit = (e) => {
+    e.preventDefault();
+    dispatch(
+      addNewProduct({
+        ...formData,
+        image: uploadedImageURL,
+      })
+    ).then((data) => {
+      console.log(data);
+    });
+  };
+
+  useEffect(() => {
+    dispatch(fetchAllProducts());
+  }, [dispatch]);
+
+  console.log(productList, "productList");
+
   return (
     <>
       <div className="flex justify-end w-full">
@@ -45,6 +78,8 @@ function AdminProducts() {
             setImageFile={setImageFile}
             uploadedImageURL={uploadedImageURL}
             setUploadedImageURL={setUploadedImageURL}
+            setimageLoadingState={setimageLoadingState}
+            imageLoadingState={imageLoadingState}
           />
           <Commonform
             formControls={addProductFormElements}

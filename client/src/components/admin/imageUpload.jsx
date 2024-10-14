@@ -4,6 +4,7 @@ import { Label } from "../ui/label";
 import { FileIcon, UploadCloudIcon, XIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import axios from "axios";
+import { Skeleton } from "../ui/skeleton";
 
 function ProductImageUpload({
   className,
@@ -11,6 +12,8 @@ function ProductImageUpload({
   setImageFile,
   uploadedImageURL,
   setUploadedImageURL,
+  setimageLoadingState,
+  imageLoadingState,
 }) {
   const inputRef = useRef(null);
   const handleImageFileChange = (e) => {
@@ -33,6 +36,7 @@ function ProductImageUpload({
   };
 
   async function uploadImageToCloudinary() {
+    setimageLoadingState(true);
     const data = new FormData();
     data.append("myFile", imageFile);
 
@@ -42,8 +46,10 @@ function ProductImageUpload({
         data
       );
 
-      if (response?.data?.success)
+      if (response?.data?.success) {
         setUploadedImageURL(response.data.result.url);
+        setimageLoadingState(false);
+      }
     } catch (error) {
       console.error("Error uploading image:", error);
     }
@@ -78,12 +84,19 @@ function ProductImageUpload({
             <UploadCloudIcon className="w-10 h-10 text-muted-foreground mb-2" />
             <span>Drag & drop or click to upload image</span>
           </Label>
+        ) : imageLoadingState ? (
+          <div className="flex items-center space-x-4">
+            <Skeleton className="h-8 w-7 rounded-sm" />
+            <Skeleton className="h-10 w-full" />
+          </div>
         ) : (
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <FileIcon className="w-6 text-primary  h-7" />
             </div>
-            <p className="text-sm font-medium">{imageFile.name}</p>
+            <p className="text-sm font-medium">
+              {imageFile.name.slice(0, 10) + "..."}
+            </p>
             <Button
               variant="ghost"
               size="icon"

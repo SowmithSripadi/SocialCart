@@ -42,10 +42,10 @@ function Commonform({
       case "select":
         element = (
           <Select
-            onValueChange={() =>
+            onValueChange={(newValue) =>
               setFormData({
                 ...formData,
-                [controlItem.name]: value,
+                [controlItem.name]: newValue,
               })
             }
             value={value}
