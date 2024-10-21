@@ -12,6 +12,7 @@ import ProductImageUpload from "../../components/admin/imageUpload";
 import { useDispatch, useSelector } from "react-redux";
 import { addNewProduct, fetchAllProducts } from "@/store/admin/products-slice";
 import { useToast } from "@/hooks/use-toast";
+import ViewProducts from "@/components/admin/viewProducts";
 
 const initialFormData = {
   image: null,
@@ -20,7 +21,7 @@ const initialFormData = {
   category: "",
   brand: "",
   price: "",
-  salesPrice: "",
+  salePrice: "",
   totalStock: "",
 };
 
@@ -62,12 +63,16 @@ function AdminProducts() {
 
   return (
     <>
-      <div className="flex justify-end w-full">
+      <div className="flex justify-end w-full mb-4">
         <Button onClick={() => setopenCreateProducts(true)}>
           Add New Products
         </Button>
       </div>
-      <div className="grid grid-4 md:grid-cols-3 lg:grid-cols-4"></div>
+      <div className="grid grid-4 md:grid-cols-3 lg:grid-cols-4 md:gap-4">
+        {productList && productList.length > 0
+          ? productList.map((product) => <ViewProducts product={product} />)
+          : null}
+      </div>
       <Sheet open={openCreateProducts} onOpenChange={setopenCreateProducts}>
         <SheetContent
           aria-describedby={null}
