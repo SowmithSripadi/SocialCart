@@ -30,7 +30,7 @@ const addProduct = async (req, res) => {
       category,
       brand,
       price,
-      salesPrice,
+      salePrice,
       totalStock,
     } = req.body;
     const newlyCreatedProduct = new Product({
@@ -40,7 +40,7 @@ const addProduct = async (req, res) => {
       category,
       brand,
       price,
-      salesPrice,
+      salePrice,
       totalStock,
     });
 
@@ -86,7 +86,7 @@ const editProduct = async (req, res) => {
       category,
       brand,
       price,
-      salesPrice,
+      salePrice,
       totalStock,
     } = req.body;
     const productToBeEdited = await Product.findById(id);
@@ -102,7 +102,7 @@ const editProduct = async (req, res) => {
     productToBeEdited.category = category || productToBeEdited.category;
     productToBeEdited.brand = brand || productToBeEdited.brand;
     productToBeEdited.price = price || productToBeEdited.price;
-    productToBeEdited.salesPrice = salesPrice || productToBeEdited.salesPrice;
+    productToBeEdited.salePrice = salePrice || productToBeEdited.salePrice;
     productToBeEdited.totalStock = totalStock || productToBeEdited.totalStock;
   } catch (e) {
     console.log(e);
