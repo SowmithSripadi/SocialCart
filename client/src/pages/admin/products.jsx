@@ -11,6 +11,7 @@ import Commonform from "@/components/common/form";
 import ProductImageUpload from "../../components/admin/imageUpload";
 import { useDispatch, useSelector } from "react-redux";
 import { addNewProduct, fetchAllProducts } from "@/store/admin/products-slice";
+import { useToast } from "@/hooks/use-toast";
 
 const initialFormData = {
   image: null,
@@ -31,6 +32,7 @@ function AdminProducts() {
   const [imageLoadingState, setimageLoadingState] = useState(false);
   const { productList } = useSelector((state) => state.adminProducts);
   const dispatch = useDispatch();
+  const { toast } = useToast();
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -41,14 +43,22 @@ function AdminProducts() {
       })
     ).then((data) => {
       console.log(data);
+      if (data?.payload?.success) {
+        dispatch(fetchAllProducts); // we need the latest added product on the ui, therefore dispatching
+        setopenCreateProducts(false);
+        setImageFile(null);
+        setFormData(initialFormData);
+        toast({
+          title: "Product added successfully",
+        });
+      }
     });
   };
 
   useEffect(() => {
     dispatch(fetchAllProducts());
   }, [dispatch]);
-
-  console.log(productList, "productList");
+  //this useEffect runs when the component first mounts
 
   return (
     <>
@@ -81,14 +91,22 @@ function AdminProducts() {
             setimageLoadingState={setimageLoadingState}
             imageLoadingState={imageLoadingState}
           />
-          <Commonform
-            formControls={addProductFormElements}
-            formData={formData}
-            setFormData={setFormData}
-            onSubmit={onSubmit}
-            buttonText={"Add"}
-            className="m-2"
-          />
+          {imageLoadingState ? (
+            <>
+              <p className="text-base text-center text-gray-500 ">
+                Image is being uploaded
+              </p>
+            </>
+          ) : (
+            <Commonform
+              formControls={addProductFormElements}
+              formData={formData}
+              setFormData={setFormData}
+              onSubmit={onSubmit}
+              buttonText={"Add"}
+              className="m-2"
+            />
+          )}
         </SheetContent>
       </Sheet>
     </>
