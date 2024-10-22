@@ -89,6 +89,7 @@ const editProduct = async (req, res) => {
       salePrice,
       totalStock,
     } = req.body;
+
     const productToBeEdited = await Product.findById(id);
     if (!productToBeEdited)
       return res.status(404).json({
@@ -101,9 +102,17 @@ const editProduct = async (req, res) => {
     productToBeEdited.description = description || description.image;
     productToBeEdited.category = category || productToBeEdited.category;
     productToBeEdited.brand = brand || productToBeEdited.brand;
-    productToBeEdited.price = price || productToBeEdited.price;
-    productToBeEdited.salePrice = salePrice || productToBeEdited.salePrice;
+    productToBeEdited.price =
+      price === "" ? 0 : price || productToBeEdited.price;
+    productToBeEdited.salePrice =
+      salePrice === "" ? 0 : salePrice || productToBeEdited.salePrice;
     productToBeEdited.totalStock = totalStock || productToBeEdited.totalStock;
+
+    await productToBeEdited.save();
+    res.status(200).json({
+      success: true,
+      data: productToBeEdited,
+    });
   } catch (e) {
     console.log(e);
     res.status(500).json({
@@ -120,7 +129,7 @@ const deleteProdcut = async (req, res) => {
     const product = await Product.findByIdAndDelete(id);
     if (!product)
       return res.status(404).json({
-        success: flase,
+        success: false,
         message: "Product not found ",
       });
     res.status(200).json({
