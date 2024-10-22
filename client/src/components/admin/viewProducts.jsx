@@ -2,7 +2,13 @@ import React from "react";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { Button } from "../ui/button";
 
-function ViewProducts({ product }) {
+function ViewProducts({
+  product,
+  setCurrentEditTile,
+  setFormData,
+  setopenCreateProducts,
+  handleDeleteProductTile,
+}) {
   return (
     <Card className="w-full max-w-sm mx-auto">
       <div>
@@ -30,8 +36,21 @@ function ViewProducts({ product }) {
             ) : null}
           </div>
           <CardFooter className="flex gap-5 justify-center items-center ">
-            <Button>Edit</Button>
-            <Button>Delete</Button>
+            <Button
+              onClick={() => {
+                setCurrentEditTile(product._id), setopenCreateProducts(true);
+                setFormData(product);
+              }}
+            >
+              Edit
+            </Button>
+            <Button
+              onClick={() => {
+                handleDeleteProductTile(product._id);
+              }}
+            >
+              Delete
+            </Button>
           </CardFooter>
         </CardContent>
       </div>

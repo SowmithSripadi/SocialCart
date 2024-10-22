@@ -17,6 +17,7 @@ function Commonform({
   onSubmit,
   buttonText,
   className = null,
+  isBtnDisabled,
 }) {
   const renderInputsbyComponents = (controlItem) => {
     let element = null;
@@ -116,7 +117,11 @@ function Commonform({
             </div>
           ))}
 
-          <Button type="submit" className="block mx-auto mt-8 w-1/2">
+          <Button
+            disabled={isBtnDisabled}
+            type="submit"
+            className="block mx-auto mt-8 w-1/2"
+          >
             {buttonText || "Submit"}
           </Button>
         </div>
