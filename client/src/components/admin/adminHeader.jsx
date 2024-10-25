@@ -1,8 +1,15 @@
 import { SquareMenu, LogOut } from "lucide-react";
 import React from "react";
 import { Button } from "../ui/button";
+import { useDispatch } from "react-redux";
+import { logoutUser } from "@/store/Userauth-slice";
 
 function adminHeader({ setOpen }) {
+  const dispatch = useDispatch();
+  const handleLogout = () => {
+    dispatch(logoutUser());
+  };
+
   return (
     <header className="flex items-center justify-between px-4 py-3 bg-background border-b-2 ">
       <Button
@@ -17,6 +24,7 @@ function adminHeader({ setOpen }) {
         <Button
           variant="outline"
           className="px-6 py-4 flex gap-2 text-sm font-medium shadow"
+          onClick={() => handleLogout()}
         >
           <LogOut />
           Logout

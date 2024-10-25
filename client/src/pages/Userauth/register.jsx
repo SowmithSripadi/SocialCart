@@ -35,7 +35,6 @@ function Register() {
           action: <ToastAction altText="Try again">Try again</ToastAction>,
         });
       }
-      console.log(data);
     });
   };
 
