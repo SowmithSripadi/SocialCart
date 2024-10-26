@@ -32,7 +32,7 @@ const MenuItems = () => {
   );
 };
 
-const HeaderRightContent = () => {
+const HeaderRightContent = ({ setOpenSheet }) => {
   const { user } = useSelector((state) => state.auth);
   const FLName = user.name.split(" ");
   let initials = FLName.map((name) => name[0].toUpperCase()).join("");
@@ -57,7 +57,10 @@ const HeaderRightContent = () => {
           <DropdownMenuLabel>Logged in as {user.name}</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem
-            onClick={() => navigate("/shop/account")}
+            onClick={() => {
+              navigate("/shop/account");
+              setOpenSheet(false);
+            }}
             className="cursor-pointer"
           >
             <CircleUser className="mr-2 h-4 w-4 " />
@@ -105,7 +108,7 @@ function UserShoppingHeader() {
           </SheetTrigger>
           <SheetContent side="left" className="w-full max-w-xs lg:hidden">
             <MenuItems />
-            <HeaderRightContent />
+            <HeaderRightContent setOpenSheet={setOpenSheet} />
           </SheetContent>
         </Sheet>
         <div className="hidden lg:block">

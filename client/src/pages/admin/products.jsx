@@ -75,10 +75,9 @@ function AdminProducts() {
 
   function isFormValid() {
     return Object.keys(formData)
-      .map((key) => {
-        formData[key] !== "";
-      })
-      .every((item) => item);
+      .filter((key) => key !== "salePrice")
+      .map((key) => formData[key] !== "") // Return the comparison result
+      .every((item) => item); // Ensure all are true
   }
 
   const handleDeleteProductTile = (tobedeletedID) => {

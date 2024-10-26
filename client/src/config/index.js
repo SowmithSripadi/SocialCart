@@ -137,3 +137,90 @@ export const shoppingViewHeaderMenuItems = [
     path: "/shop/listing",
   },
 ];
+
+export const categoryOptionsMap = {
+  men: "Men",
+  women: "Women",
+  kids: "Kids",
+  accessories: "Accessories",
+  footwear: "Footwear",
+};
+
+export const brandOptionsMap = {
+  flexora: "Flexora",
+  stridepeak: "StridePeak",
+  velvio: "Velvio",
+  nurotix: "Nurotix",
+  revocore: "RevoCore",
+  zypher: "Zypher",
+  flauntis: "Flauntis",
+  klyne: "Klyne",
+  orbis: "Orbis",
+  lumare: "Lumare",
+};
+
+export const filterOptions = {
+  Category: [
+    { id: "men", label: "Men" },
+    { id: "women", label: "Women" },
+    { id: "kids", label: "Kids" },
+    { id: "accessories", label: "Accessories" },
+    { id: "footwear", label: "Footwear" },
+  ],
+  Brand: [
+    { id: "flexora", label: "Flexora" },
+    { id: "stridepeak", label: "StridePeak" },
+    { id: "velvio", label: "Velvio" },
+    { id: "nurotix", label: "Nurotix" },
+    { id: "revocore", label: "RevoCore" },
+    { id: "zypher", label: "Zypher" },
+    { id: "flauntis", label: "Flauntis" },
+    { id: "klyne", label: "Klyne" },
+    { id: "orbis", label: "Orbis" },
+    { id: "lumare", label: "Lumare" },
+  ],
+};
+
+export const sortOptions = [
+  { id: "price-lowtohigh", label: "Price: Low to High" },
+  { id: "price-hightolow", label: "Price: High to Low" },
+  { id: "title-atoz", label: "Title: A to Z" },
+  { id: "title-ztoa", label: "Title: Z to A" },
+];
+
+export const addressFormControls = [
+  {
+    label: "Address",
+    name: "address",
+    componentType: "input",
+    type: "text",
+    placeholder: "Enter your address",
+  },
+  {
+    label: "City",
+    name: "city",
+    componentType: "input",
+    type: "text",
+    placeholder: "Enter your city",
+  },
+  {
+    label: "Pincode",
+    name: "pincode",
+    componentType: "input",
+    type: "text",
+    placeholder: "Enter your pincode",
+  },
+  {
+    label: "Phone",
+    name: "phone",
+    componentType: "input",
+    type: "text",
+    placeholder: "Enter your phone number",
+  },
+  {
+    label: "Notes",
+    name: "notes",
+    componentType: "textarea",
+    placeholder: "Enter any additional notes",
+  },
+];
