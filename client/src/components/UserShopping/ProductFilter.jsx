@@ -13,6 +13,7 @@ function ProductFilter({
   handleApplyFilters,
   setFilters,
   setSearchParams,
+  handleRemoveFilters,
 }) {
   return (
     <div className="bg-background rounded-lg shadow-sm">
@@ -61,10 +62,7 @@ function ProductFilter({
             variant="outline"
             className="border-b-4"
             onClick={() => {
-              setFilters({}); // Reset filters to an empty object
-              sessionStorage.removeItem("filters");
-              console.log(filters);
-              setSearchParams(new URLSearchParams()); // Clear URL parameters
+              handleRemoveFilters();
               handleRemoveCheck();
             }}
           >

@@ -29,11 +29,11 @@ function Shoppinglisting() {
   const dispatch = useDispatch();
   const { productList } = useSelector((state) => state.shopProducts);
   const [filters, setFilters] = useState("");
+  const [applyFilters, setApplyFilters] = useState("");
   const [sort, setSort] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const handleSort = (value) => {
-    console.log(value);
     setSort(value);
   };
 
@@ -60,27 +60,56 @@ function Shoppinglisting() {
     sessionStorage.setItem("filters", JSON.stringify(AllSelectedFilters));
   };
 
-  useEffect(() => {
-    dispatch(fetchAllFilteredProducts());
-  }, [dispatch]);
-
   const handleApplyFilters = () => {
-    if (filters && Object.keys(filters).length > 0) {
-      // Clear any previous timeout
-      const timer = setTimeout(() => {
-        const createQueryString = createSearchParamsHelper(filters);
-        setSearchParams(new URLSearchParams(createQueryString));
-      }, 300); // Adjust the delay as needed (e.g., 300ms)
+    // Generate the query string and update URL
+    const queryString = createSearchParamsHelper(filters);
+    setSearchParams(new URLSearchParams(queryString));
+    sessionStorage.setItem("filters", JSON.stringify(filters));
+    setApplyFilters(filters);
+    // Store filters and trigger fetch
+    // dispatch(
+    //   fetchAllFilteredProducts({ filterParams: filters, sortParams: sort })
+    // );
+    // setApplyFilters(true);
+  };
 
-      // Clear timeout on cleanup
-      return () => clearTimeout(timer);
-    }
+  const handleRemoveFilters = () => {
+    setFilters({}); // Reset filters to an empty object
+    setApplyFilters({});
+    sessionStorage.removeItem("filters");
+    setSearchParams(new URLSearchParams()); // Clear URL parameters
+    // dispatch(
+    //   fetchAllFilteredProducts({ filterParams: filters, sortParams: sort })
+    // );
+    // setApplyFilters(false);
   };
 
   useEffect(() => {
-    setSort("price-lowtohigh");
-    setFilters(JSON.parse(sessionStorage.getItem("filters") || "{}")); // Ensure "{}" is a JSON string
-  }, []); // Empty dependency array so it only runs once on mount
+    dispatch(
+      fetchAllFilteredProducts({ filterParams: filters, sortParams: sort })
+    );
+  }, [applyFilters, sort, dispatch]);
+
+  useEffect(() => {
+    const savedFilters = JSON.parse(sessionStorage.getItem("filters") || "{}");
+    const initialSort = "price-lowtohigh";
+    setFilters(savedFilters);
+    setSort(initialSort);
+
+    // Dispatch based on whether filters are saved
+    if (Object.keys(savedFilters).length > 0) {
+      dispatch(
+        fetchAllFilteredProducts({
+          filterParams: savedFilters,
+          sortParams: initialSort,
+        })
+      );
+    } else {
+      dispatch(
+        fetchAllFilteredProducts({ filterParams: {}, sortParams: initialSort })
+      );
+    }
+  }, [dispatch]);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 p-4 md:p-6">
@@ -90,6 +119,7 @@ function Shoppinglisting() {
         handleApplyFilters={handleApplyFilters}
         setFilters={setFilters}
         setSearchParams={setSearchParams}
+        handleRemoveFilters={handleRemoveFilters}
       />
       <div className="bg-background w-full rounded-lg shadow-sm">
         <div className="p-4 border-b flex items-center justify-between">
@@ -126,7 +156,7 @@ function Shoppinglisting() {
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
-          {productList && productList.length > 1
+          {productList && productList.length
             ? productList.map((product, index) => (
                 <ShoppingProductTile
                   key={product.id || index}
