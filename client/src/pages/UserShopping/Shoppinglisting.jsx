@@ -1,4 +1,8 @@
-import { ProductFilter, ShoppingProductTile } from "@/components";
+import {
+  ProductFilter,
+  ShoppingProductTile,
+  ProductDetailsDialog,
+} from "@/components";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -8,7 +12,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { sortOptions } from "@/config";
-import { fetchAllFilteredProducts } from "@/store/shop/products-slice";
+import {
+  fetchAllFilteredProducts,
+  fetchProdutDetails,
+} from "@/store/shop/products-slice";
 import { ArrowUpDownIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -27,11 +34,14 @@ const createSearchParamsHelper = (filterParams) => {
 
 function Shoppinglisting() {
   const dispatch = useDispatch();
-  const { productList } = useSelector((state) => state.shopProducts);
+  const { productList, productDetails } = useSelector(
+    (state) => state.shopProducts
+  );
   const [filters, setFilters] = useState("");
   const [applyFilters, setApplyFilters] = useState("");
   const [sort, setSort] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [openDialog, setOpenDialog] = useState(false);
 
   const handleSort = (value) => {
     setSort(value);
@@ -111,6 +121,14 @@ function Shoppinglisting() {
     }
   }, [dispatch]);
 
+  useEffect(() => {
+    if (productDetails !== null) setOpenDialog(true);
+  }, [productDetails]);
+
+  const handleProductClick = (productId) => {
+    dispatch(fetchProdutDetails(productId));
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 p-4 md:p-6">
       <ProductFilter
@@ -159,6 +177,7 @@ function Shoppinglisting() {
           {productList && productList.length
             ? productList.map((product, index) => (
                 <ShoppingProductTile
+                  handleProductClick={handleProductClick}
                   key={product.id || index}
                   product={product}
                 />
@@ -166,6 +185,11 @@ function Shoppinglisting() {
             : null}
         </div>
       </div>
+      <ProductDetailsDialog
+        open={openDialog}
+        setOpen={setOpenDialog}
+        productDetails={productDetails}
+      />
     </div>
   );
 }

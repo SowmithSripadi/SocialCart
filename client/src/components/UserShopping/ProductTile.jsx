@@ -4,10 +4,15 @@ import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { brandOptionsMap, categoryOptionsMap } from "@/config";
 
-function ShoppingProductTile({ product }) {
+function ShoppingProductTile({ product, handleProductClick }) {
   return (
     <Card className="w-full max-w-sm mx-auto">
-      <div>
+      <div
+        onClick={() => {
+          handleProductClick(product?._id);
+        }}
+        className="cursor-pointer"
+      >
         <div className="relative">
           <img
             src={product?.image}

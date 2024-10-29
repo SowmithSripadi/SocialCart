@@ -7,7 +7,7 @@ import UserShoppingHeader from "./UserShopping/UserShoppingHeader";
 import CheckAuth from "./common/Check-auth";
 import ProductFilter from "./UserShopping/ProductFilter";
 import ShoppingProductTile from "./UserShopping/ProductTile";
-
+import ProductDetailsDialog from "./UserShopping/ProductDetails";
 export {
   UserAuthLayout,
   AdminHeader,
@@ -18,4 +18,5 @@ export {
   CheckAuth,
   ProductFilter,
   ShoppingProductTile,
+  ProductDetailsDialog,
 };
