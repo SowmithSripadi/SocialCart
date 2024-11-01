@@ -6,6 +6,7 @@ const authRouter = require("./routes/auth/auth-routes");
 const PORT = process.env.PORT || 8000;
 const adminProductsRouter = require("./routes/admin/productsRoutes");
 const shopProductsRouter = require("./routes/shop/products-routes");
+const cartRouter = require("./routes/shop/cart-routes");
 
 mongoose
   .connect(
@@ -37,5 +38,6 @@ app.use(express.json());
 app.use("/api/auth", authRouter);
 app.use("/api/admin/products", adminProductsRouter);
 app.use("/api/shop/products", shopProductsRouter);
+app.use("/api/shop/cart", cartRouter);
 
 app.listen(PORT, () => console.log(`Server started - ${PORT}`));
