@@ -8,11 +8,12 @@ const addToCart = async (req, res) => {
     if (!userId || !productId || quantity <= 0) {
       return res.status(400).json({
         success: false,
-        message: "Invalid data",
+        message: "Invalid data provided!",
       });
     }
 
     const product = await Product.findById(productId);
+
     if (!product) {
       return res.status(404).json({
         success: false,
@@ -21,18 +22,19 @@ const addToCart = async (req, res) => {
     }
 
     let cart = await Cart.findOne({ userId });
+
     if (!cart) {
       cart = new Cart({ userId, items: [] });
     }
 
-    const findCurrentProduct = cart.items.findIndex(
+    const findCurrentProductIndex = cart.items.findIndex(
       (item) => item.productId.toString() === productId
     );
 
-    if (findCurrentProduct === -1) {
+    if (findCurrentProductIndex === -1) {
       cart.items.push({ productId, quantity });
     } else {
-      cart.items[findCurrentProduct].quantity += quantity;
+      cart.items[findCurrentProductIndex].quantity += quantity;
     }
 
     await cart.save();
@@ -40,8 +42,8 @@ const addToCart = async (req, res) => {
       success: true,
       data: cart,
     });
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    console.log(error);
     res.status(500).json({
       success: false,
       message: "Error",
@@ -87,7 +89,7 @@ const fetchCartItems = async (req, res) => {
       title: item.productId.title,
       price: item.productId.price,
       salePrice: item.productId.salePrice,
-      quanity: item.productId.quanity,
+      quantity: item.quantity,
     }));
 
     res.status(200).json({
@@ -134,7 +136,7 @@ const deleteCartItems = async (req, res) => {
     );
 
     await cart.save();
-    await Cart.populate({
+    await cart.populate({
       path: "items.productId",
       select: "image title price salePrice",
     });
@@ -145,7 +147,7 @@ const deleteCartItems = async (req, res) => {
       title: item.productId ? item.productId.title : null,
       price: item.productId ? item.productId.price : null,
       salePrice: item.productId ? item.productId.salePrice : null,
-      quanity: item.productId ? item.productId.quanity : null,
+      quantity: item.quantity,
     }));
 
     res.status(200).json({
