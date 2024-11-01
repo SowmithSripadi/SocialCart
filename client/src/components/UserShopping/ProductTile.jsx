@@ -38,8 +38,10 @@ function ShoppingProductTile({ product, handleProductClick, handleAddtoCart }) {
           <div className="flex justify-between items-center mb-2">
             <span
               className={` ${
-                product?.salePrice > 0 ? "line-through" : null
-              } text-lg font-semibold text-primary`}
+                product?.salePrice > 0
+                  ? "line-through text-muted-foreground"
+                  : "text-primary"
+              } text-lg font-semibold `}
             >
               ${product?.price}
             </span>

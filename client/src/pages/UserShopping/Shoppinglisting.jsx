@@ -12,7 +12,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { sortOptions } from "@/config";
-import { addToCart } from "@/store/shop/cart-slice";
+import { useToast } from "@/hooks/use-toast";
+import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
 import {
   fetchAllFilteredProducts,
   fetchProdutDetails,
@@ -44,6 +45,7 @@ function Shoppinglisting() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [openDialog, setOpenDialog] = useState(false);
   const { user } = useSelector((state) => state.auth);
+  const { toast } = useToast();
 
   const handleSort = (value) => {
     setSort(value);
@@ -79,7 +81,12 @@ function Shoppinglisting() {
         productId: currentProductId,
         quantity: 1,
       })
-    ).then((data) => console.log(data));
+    ).then((data) => {
+      if (data?.payload.success) {
+        dispatch(fetchCartItems(user?.id));
+        toast({ title: "Product added to cart" });
+      }
+    });
   };
 
   const handleApplyFilters = () => {
