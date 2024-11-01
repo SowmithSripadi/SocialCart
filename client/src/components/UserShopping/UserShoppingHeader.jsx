@@ -15,6 +15,7 @@ import {
 } from "../ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { logoutUser } from "@/store/Userauth-slice";
+import UserCartWrapper from "./cart-wrapper";
 
 const MenuItems = () => {
   return (
@@ -38,6 +39,8 @@ const HeaderRightContent = ({ setOpenSheet }) => {
   let initials = FLName.map((name) => name[0].toUpperCase()).join("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const [openCartSheet, setOpenCartSheet] = useState(false);
 
   const handleLogout = () => {
     dispatch(logoutUser());
@@ -76,10 +79,13 @@ const HeaderRightContent = ({ setOpenSheet }) => {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <Button>
-        <ShoppingCart className="w-6 h-6" />
-        <span className="sr-only">User cart</span>
-      </Button>
+      <Sheet open={openCartSheet} onOpenChange={() => setOpenCartSheet(false)}>
+        <Button onClick={() => setOpenCartSheet(true)}>
+          <ShoppingCart className="w-6 h-6" />
+          <span className="sr-only">User cart</span>
+        </Button>
+        <UserCartWrapper />
+      </Sheet>
     </div>
   );
 };

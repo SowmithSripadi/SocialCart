@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { sortOptions } from "@/config";
+import { addToCart } from "@/store/shop/cart-slice";
 import {
   fetchAllFilteredProducts,
   fetchProdutDetails,
@@ -42,6 +43,7 @@ function Shoppinglisting() {
   const [sort, setSort] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const [openDialog, setOpenDialog] = useState(false);
+  const { user } = useSelector((state) => state.auth);
 
   const handleSort = (value) => {
     setSort(value);
@@ -68,6 +70,16 @@ function Shoppinglisting() {
     }
     setFilters(AllSelectedFilters);
     sessionStorage.setItem("filters", JSON.stringify(AllSelectedFilters));
+  };
+
+  const handleAddtoCart = (currentProductId) => {
+    dispatch(
+      addToCart({
+        userId: user?.id,
+        productId: currentProductId,
+        quantity: 1,
+      })
+    ).then((data) => console.log(data));
   };
 
   const handleApplyFilters = () => {
@@ -180,6 +192,7 @@ function Shoppinglisting() {
                   handleProductClick={handleProductClick}
                   key={product.id || index}
                   product={product}
+                  handleAddtoCart={handleAddtoCart}
                 />
               ))
             : null}

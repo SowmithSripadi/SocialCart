@@ -1,11 +1,12 @@
 import Commonform from "@/components/common/form";
+import { Button } from "@/components/ui/button";
 import { loginFromControls } from "@/config";
 import { useToast } from "@/hooks/use-toast";
 import { loginUser } from "@/store/Userauth-slice";
-import React from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+
 const initialState = {
   email: "",
   password: "",
@@ -15,8 +16,17 @@ function Login() {
   const [formData, setFormData] = useState(initialState);
   const dispatch = useDispatch();
   const { toast } = useToast();
-  const onSubmit = (e) => {
-    e.preventDefault();
+  const [isTestUser, setIsTestUser] = useState(false);
+
+  const handleTestUserLogin = () => {
+    setFormData({
+      email: "testuser@gmail.com",
+      password: "test@123",
+    });
+    setIsTestUser(true);
+  };
+
+  const onSubmit = () => {
     dispatch(loginUser(formData)).then((data) => {
       if (data?.payload?.success) {
         toast({
@@ -31,8 +41,15 @@ function Login() {
     });
   };
 
+  useEffect(() => {
+    if (isTestUser) {
+      onSubmit();
+      setIsTestUser(false);
+    }
+  }, [isTestUser]);
+
   return (
-    <div className="mx-uto w-full max-w-full space-y-6">
+    <div className="mx-auto w-full max-w-full space-y-6 flex flex-col">
       <div className="text-center">
         <h1 className="text-2xl font-bold tracking-tight text-foreground">
           Sign in to your account
@@ -55,6 +72,11 @@ function Login() {
         onSubmit={onSubmit}
         className={"flex justify-center"}
       />
+      <div className="flex justify-center w-full">
+        <Button onClick={handleTestUserLogin}>
+          Quick Login using TestUser account
+        </Button>
+      </div>
     </div>
   );
 }
