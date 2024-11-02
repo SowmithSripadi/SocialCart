@@ -207,7 +207,7 @@ const updateCartItems = async (req, res) => {
       title: item.productId ? item.productId.title : null,
       price: item.productId ? item.productId.price : null,
       salePrice: item.productId ? item.productId.salePrice : null,
-      quanity: item.productId ? item.productId.quanity : null,
+      quantity: item.quantity,
     }));
 
     res.status(200).json({
