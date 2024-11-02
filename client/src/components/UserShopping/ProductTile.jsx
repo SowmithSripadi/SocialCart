@@ -3,8 +3,29 @@ import { Card, CardContent, CardFooter } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { brandOptionsMap, categoryOptionsMap } from "@/config";
+import PlusMinusQuantityCart from "./PlusMinusQuantityCart";
+import { useSelector, useDispatch } from "react-redux";
+import { deleteCartItems } from "@/store/shop/cart-slice";
 
 function ShoppingProductTile({ product, handleProductClick, handleAddtoCart }) {
+  const { cartItems } = useSelector((state) => state.shopCart);
+
+  const filteredItem = (cartItems?.items || []).filter(
+    (item) => item?.productId === product?._id
+  );
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+  const handleDeleteCartItems = (cartItem) => {
+    dispatch(
+      deleteCartItems({ userId: user?.id, productId: cartItem?.productId })
+    );
+  };
+
+  // console.log(cartItems?.items);
+  // console.log(product);
+  // console.log(filteredItem);
+  // console.log(cartItems);
+
   return (
     <Card className="w-full max-w-sm mx-auto">
       <div
@@ -58,12 +79,19 @@ function ShoppingProductTile({ product, handleProductClick, handleAddtoCart }) {
         </CardContent>
       </div>
       <CardFooter>
-        <Button
-          onClick={() => handleAddtoCart(product?._id)}
-          className="w-full"
-        >
-          Add to cart
-        </Button>
+        {filteredItem?.[0]?.quantity > 0 ? (
+          <PlusMinusQuantityCart
+            cartItem={filteredItem[0]}
+            handleDeleteCartItems={handleDeleteCartItems}
+          />
+        ) : (
+          <Button
+            onClick={() => handleAddtoCart(product?._id)}
+            className="w-full"
+          >
+            Add to cart
+          </Button>
+        )}
       </CardFooter>
     </Card>
   );

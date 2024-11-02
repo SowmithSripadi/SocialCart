@@ -10,8 +10,14 @@ import { SelectSeparator } from "../ui/select";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { StarIcon } from "lucide-react";
 import { Input } from "../ui/input";
+import PlusMinusQuantityCart from "./PlusMinusQuantityCart";
 
-function ProductDetailsDialog({ open, setOpen, productDetails }) {
+function ProductDetailsDialog({
+  open,
+  setOpen,
+  productDetails,
+  handleAddtoCart,
+}) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="grid grid-cols-2 gap-8 sm:p-12 max-w-[90vw] sm:max-w-[80vw] lg:max-w-[70vw]">
@@ -70,7 +76,19 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
             <span className="text-muted-foreground">(4.5)</span>
           </div>
           <div className="mt-5 mb-4">
-            <Button className="w-full">Add to cart</Button>
+            {productDetails?.quantity > 0 ? (
+              <PlusMinusQuantityCart />
+            ) : (
+              <Button
+                className="w-full"
+                onClick={() => {
+                  handleAddtoCart(productDetails?._id);
+                  setOpen(false);
+                }}
+              >
+                Add to cart
+              </Button>
+            )}
           </div>
           <SelectSeparator />
           <div className="max-h-[300px] overflow-auto">

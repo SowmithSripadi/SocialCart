@@ -209,6 +209,7 @@ function Shoppinglisting() {
         open={openDialog}
         setOpen={setOpenDialog}
         productDetails={productDetails}
+        handleAddtoCart={handleAddtoCart}
       />
     </div>
   );

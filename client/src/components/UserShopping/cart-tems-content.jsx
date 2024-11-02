@@ -1,8 +1,8 @@
 import React from "react";
-import { Button } from "../ui/button";
-import { Minus, Plus, Trash } from "lucide-react";
+import { Trash } from "lucide-react";
+import PlusMinusQuantityCart from "./PlusMinusQuantityCart";
 
-import { deleteCartItems } from "@/store/shop/cart-slice";
+import { deleteCartItems, updateCartItems } from "@/store/shop/cart-slice";
 import { useDispatch, useSelector } from "react-redux";
 
 function UserCartItemsContent({ cartItem }) {
@@ -24,25 +24,10 @@ function UserCartItemsContent({ cartItem }) {
       />
       <div className="flex-1">
         <h3 className="font-extrabold">{cartItem?.title}</h3>
-        <div className="flex items-center mt-1 gap-2">
-          <Button
-            variant="outline"
-            size="icon"
-            className="h-8 w-8 rounded-full"
-          >
-            <Minus className="h-4 w-4" />
-            <span className="sr-only">Decrease</span>
-          </Button>
-          <span className="font-semibold"> {cartItem?.quantity}</span>
-          <Button
-            variant="outline"
-            size="icon"
-            className="h-8 w-8 rounded-full"
-          >
-            <Plus className="h-4 w-4" />
-            <span className="sr-only">Decrease</span>
-          </Button>
-        </div>
+        <PlusMinusQuantityCart
+          cartItem={cartItem}
+          handleDeleteCartItems={handleDeleteCartItems}
+        />
       </div>
       <div className="flex flex-col items-end">
         <div className="flex gap-2">

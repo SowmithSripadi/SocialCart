@@ -3,7 +3,9 @@ import axios from "axios";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const initialState = {
-  cartItems: [],
+  cartItems: {
+    items: [],
+  },
   isLoading: false,
 };
 
@@ -43,6 +45,8 @@ export const deleteCartItems = createAsyncThunk(
 export const updateCartItems = createAsyncThunk(
   "cart/updateCartItems",
   async ({ userId, productId, quantity }) => {
+    console.log(userId, productId, quantity);
+
     const res = await axios.put(
       "http://localhost:8000/api/shop/cart/update-cart",
       {
