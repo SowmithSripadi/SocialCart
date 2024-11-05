@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { House, LogOut, Menu, ShoppingCart, CircleUser } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Button } from "../ui/button";
 import { useDispatch, useSelector } from "react-redux";
 import { shoppingViewHeaderMenuItems } from "@/config";
+
+import House from "../../assets/icons/home.png";
+import ShoppingCart from "../../assets/icons/shopping-cart.png";
+import Menu from "../../assets/icons/menu.png";
+import LogOut from "../../assets/icons/logout.png";
+import CircleUser from "../../assets/icons/user.png";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -72,7 +78,7 @@ const HeaderRightContent = ({ setOpenSheet }) => {
             }}
             className="cursor-pointer"
           >
-            <CircleUser className="mr-2 h-4 w-4 " />
+            <img src={CircleUser} alt="user icon" className="mr-2 h-4 w-4 " />
             Account
           </DropdownMenuItem>
           <DropdownMenuSeparator />
@@ -80,14 +86,14 @@ const HeaderRightContent = ({ setOpenSheet }) => {
             onClick={() => handleLogout()}
             className="cursor-pointer"
           >
-            <LogOut className="mr-2 h-4 w-4 " />
+            <img src={LogOut} about="lotgout" className="mr-2 h-4 w-4 " />
             Logout
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
       <Sheet open={openCartSheet} onOpenChange={() => setOpenCartSheet(false)}>
         <Button onClick={() => setOpenCartSheet(true)}>
-          <ShoppingCart className="w-6 h-6" />
+          <img src={ShoppingCart} alt="shopping cart" className="w-6 h-6" />
           <span className="sr-only">User cart</span>
         </Button>
         <UserCartWrapper
@@ -115,13 +121,14 @@ function UserShoppingHeader() {
     <header className="sticky top-0 z-40 w-full border-b bg-background p-4">
       <div className="flex h-16 items-center justify-between px-4 md:px-6">
         <Link to="/shop/home" className="flex flex-col items-center mt-3">
-          <House className="h-6 w-6" />
-          <span className="font-bold">Home</span>
+          {/* <House className="h-6 w-6" /> */}
+          <img src={House} alt="Home icon" className="h-9 w-9" />
+          <span className="font-bold text-sm">Home</span>
         </Link>
         <Sheet open={openSheet} onOpenChange={handleSheetOpen}>
           <SheetTrigger asChild>
             <Button variant="outline" size="icon" className="lg:hidden">
-              <Menu className="h-6 w-6" />
+              <img src={Menu} alt="menu" className="h-6 w-6" />
               <span className="sr-only">Toggle header menu</span>
             </Button>
           </SheetTrigger>
