@@ -120,10 +120,10 @@ function UserShoppingHeader() {
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background p-4">
       <div className="flex h-16 items-center justify-between px-4 md:px-6">
-        <Link to="/shop/home" className="flex flex-col items-center mt-3">
+        <Link to="/shop/home" className="items-center mt-3">
           {/* <House className="h-6 w-6" /> */}
-          <img src={House} alt="Home icon" className="h-9 w-9" />
-          <span className="font-bold text-sm">Home</span>
+          <img src={House} alt="Home icon" className=" h-9 w-9" />
+          {/* <span className="font-bold text-sm">Home</span> */}
         </Link>
         <Sheet open={openSheet} onOpenChange={handleSheetOpen}>
           <SheetTrigger asChild>
