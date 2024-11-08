@@ -23,6 +23,7 @@ import { Avatar, AvatarFallback } from "../ui/avatar";
 import { logoutUser } from "@/store/Userauth-slice";
 import UserCartWrapper from "./cart-wrapper";
 import { fetchCartItems } from "@/store/shop/cart-slice";
+import SpecialButton from "../ui/specialButton";
 
 const MenuItems = () => {
   return (
@@ -55,7 +56,9 @@ const HeaderRightContent = ({ setOpenSheet }) => {
   };
 
   useEffect(() => {
-    dispatch(fetchCartItems(user?.id));
+    if (user?.id) {
+      dispatch(fetchCartItems({ userId: user.id }));
+    }
   }, [dispatch]);
 
   return (
@@ -142,7 +145,10 @@ function UserShoppingHeader() {
         </div>
 
         <div className="hidden lg:block">
-          <HeaderRightContent />
+          <div className="flex gap-4">
+            <HeaderRightContent />
+            <SpecialButton name={"Collaborate"} />
+          </div>
         </div>
       </div>
     </header>

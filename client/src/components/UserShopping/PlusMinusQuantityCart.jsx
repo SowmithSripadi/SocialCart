@@ -15,6 +15,7 @@ function PlusMinusQuantityCart({ cartItem, handleDeleteCartItems }) {
       dispatch(
         updateCartItems({
           userId: user?.id,
+          sessionId: undefined, // If session.id is undefined, this will just be omitted
           productId: cartItem?.productId,
           quantity:
             value === "plus" ? cartItem?.quantity + 1 : cartItem?.quantity - 1,
@@ -22,6 +23,7 @@ function PlusMinusQuantityCart({ cartItem, handleDeleteCartItems }) {
       );
     }
   };
+
   return (
     <div className="flex items-center mt-1 gap-2">
       <Button

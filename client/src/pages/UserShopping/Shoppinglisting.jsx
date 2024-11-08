@@ -82,8 +82,8 @@ function Shoppinglisting() {
         quantity: 1,
       })
     ).then((data) => {
-      if (data?.payload.success) {
-        dispatch(fetchCartItems(user?.id));
+      if (data?.payload.success && user?.id) {
+        dispatch(fetchCartItems({ userId: user.id }));
         toast({ title: "Product added to cart" });
       }
     });

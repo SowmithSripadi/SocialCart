@@ -2,7 +2,7 @@ import React from "react";
 import { Trash } from "lucide-react";
 import PlusMinusQuantityCart from "./PlusMinusQuantityCart";
 
-import { deleteCartItems, updateCartItems } from "@/store/shop/cart-slice";
+import { deleteCartItems } from "@/store/shop/cart-slice";
 import { useDispatch, useSelector } from "react-redux";
 
 function UserCartItemsContent({ cartItem }) {
