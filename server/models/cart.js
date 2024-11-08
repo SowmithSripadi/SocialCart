@@ -1,3 +1,4 @@
+// models/cart.js
 const mongoose = require("mongoose");
 
 const CartSchema = new mongoose.Schema({
@@ -5,6 +6,11 @@ const CartSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
+  },
+  session_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Session", // Reference to the Session model, if collaborative
+    default: null, // Null indicates no collaborative session
   },
   items: [
     {
