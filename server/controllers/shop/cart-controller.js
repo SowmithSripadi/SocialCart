@@ -126,9 +126,26 @@ const deleteCartItems = async (req, res) => {
     );
     await cart.save();
 
-    if (sessionId) io.to(sessionId).emit("cart_updated", cart);
+    // Populate product details
+    await cart.populate("items.productId");
 
-    res.status(200).json({ success: true, data: cart });
+    const cartItemsWithDetails = cart.items.map((item) => {
+      const product = item.productId;
+      return {
+        productId: product._id,
+        quantity: item.quantity,
+        title: product.title,
+        price: product.price,
+        salePrice: product.salePrice,
+        image: product.image,
+      };
+    });
+
+    if (sessionId) io.to(sessionId).emit("cart_updated", cartItemsWithDetails);
+
+    res
+      .status(200)
+      .json({ success: true, data: { items: cartItemsWithDetails } });
   } catch (err) {
     console.error("Error deleting item from cart:", err);
     res.status(500).json({ success: false, message: "Error" });

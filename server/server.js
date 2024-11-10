@@ -30,7 +30,13 @@ mongoose
 
 const app = express();
 const server = http.createServer(app); // Create HTTP server
-const io = socketIo(server); // Initialize Socket.IO with the server
+const io = socketIo(server, {
+  cors: {
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+}); // Initialize Socket.IO with the server
 
 // Middleware
 app.use(
@@ -54,7 +60,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/admin/products", adminProductsRouter);
 app.use("/api/shop/products", shopProductsRouter);
 app.use("/api/shop/cart", cartRouter);
-app.use("/api/shop/session", sessionRouter);
+app.use("/api/session", sessionRouter);
 
 socketHandler(io);
 
