@@ -4,16 +4,43 @@ import axios from "axios";
 // Async thunk to handle session creation
 export const createSession = createAsyncThunk(
   "collaborativeSession/createSession",
-  async (userData, { rejectWithValue }) => {
+  async (userId) => {
+    // console.log(userId);
+
     try {
       const response = await axios.post(
         "http://localhost:8000/api/session/create",
-        userData
+        userId
+      );
+      return response.data;
+    } catch (error) {
+      return console.log(error);
+    }
+  }
+);
+
+export const joinSession = createAsyncThunk(
+  "collaborativeSession/joinSession",
+  async ({ userId, sessionId }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:8000/api/session/join/${sessionId}`,
+        { guestUserId: userId }
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
+  }
+);
+
+export const fetchSession = createAsyncThunk(
+  "collaborativeSession/fetchSession",
+  async ({ userId }) => {
+    const response = await axios.get("http://localhost:8000/api/session/get", {
+      params: { userId },
+    });
+    return response.data;
   }
 );
 
@@ -45,6 +72,18 @@ const collaborativeSessionSlice = createSlice({
         state.sessionLink = action.payload.sessionLink;
       })
       .addCase(createSession.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(joinSession.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(joinSession.fulfilled, (state, action) => {
+        state.loading = false;
+        state.sessionId = action.payload.sessionDetails.session_id;
+      })
+      .addCase(joinSession.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

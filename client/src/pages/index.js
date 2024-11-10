@@ -10,6 +10,7 @@ import ShoppingHome from "./UserShopping/ShoppingHome";
 import Shoppinglisting from "./UserShopping/Shoppinglisting";
 import UnAuth from "./Userauth/UnAuth";
 import NotFound from "./Userauth/NotFound";
+import JoinSession from "./UserSharedCart/joinSession";
 
 export {
   Login,
@@ -24,4 +25,5 @@ export {
   Shoppinglisting,
   UnAuth,
   NotFound,
+  JoinSession,
 };

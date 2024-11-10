@@ -5,9 +5,15 @@ import { Button } from "../ui/button";
 import { brandOptionsMap, categoryOptionsMap } from "@/config";
 import PlusMinusQuantityCart from "./PlusMinusQuantityCart";
 import { useSelector, useDispatch } from "react-redux";
-import { deleteCartItems } from "@/store/shop/cart-slice";
+import {
+  deleteCartItems,
+  addToCart,
+  fetchCartItems,
+} from "@/store/shop/cart-slice";
+import { useToast } from "@/hooks/use-toast";
 
-function ShoppingProductTile({ product, handleProductClick, handleAddtoCart }) {
+function ShoppingProductTile({ product, handleProductClick }) {
+  const { toast } = useToast();
   const { cartItems } = useSelector((state) => state.shopCart);
 
   const filteredItem = (cartItems?.items || []).filter(
@@ -19,6 +25,21 @@ function ShoppingProductTile({ product, handleProductClick, handleAddtoCart }) {
     dispatch(
       deleteCartItems({ userId: user?.id, productId: cartItem?.productId })
     );
+  };
+
+  const handleAddtoCart = (currentProductId) => {
+    dispatch(
+      addToCart({
+        userId: user?.id,
+        productId: currentProductId,
+        quantity: 1,
+      })
+    ).then((data) => {
+      if (data?.payload.success && user?.id) {
+        dispatch(fetchCartItems({ userId: user.id }));
+        toast({ title: "Product added to cart" });
+      }
+    });
   };
 
   // console.log(cartItems?.items);

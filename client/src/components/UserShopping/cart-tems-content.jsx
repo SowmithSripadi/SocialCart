@@ -11,7 +11,11 @@ function UserCartItemsContent({ cartItem }) {
 
   const handleDeleteCartItems = (cartItem) => {
     dispatch(
-      deleteCartItems({ userId: user?.id, productId: cartItem?.productId })
+      deleteCartItems({
+        userId: user?.id,
+        sessionId: undefined,
+        productId: cartItem?.productId,
+      })
     );
   };
 

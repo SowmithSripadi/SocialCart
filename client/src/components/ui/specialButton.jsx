@@ -1,10 +1,10 @@
 import React from "react";
 import styled from "styled-components";
 
-const SpecialButton = ({ name }) => {
+const SpecialButton = ({ name, onClick }) => {
   return (
     <StyledWrapper>
-      <button className="btn">
+      <button className="btn" onClick={onClick}>
         <span>{name}</span>
       </button>
     </StyledWrapper>

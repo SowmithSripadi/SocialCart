@@ -23,6 +23,7 @@ import {
   ShoppingHome,
   UnAuth,
   NotFound,
+  JoinSession,
 } from "./pages";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
@@ -79,6 +80,14 @@ function App() {
             <Route path="checkout" element={<ShoppingCheckout />} />
             <Route path="account" element={<ShoppingAccount />} />
           </Route>
+          <Route
+            path="/shop/session/join/:sessionId"
+            element={
+              <CheckAuth props={{ isAuthenticated, user }}>
+                <JoinSession />
+              </CheckAuth>
+            }
+          />
           <Route path="*" element={<NotFound />} />
           <Route path="/unauth" element={<UnAuth />} />
         </Routes>

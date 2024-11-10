@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { sortOptions } from "@/config";
 import { useToast } from "@/hooks/use-toast";
-import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
 import {
   fetchAllFilteredProducts,
   fetchProdutDetails,
@@ -74,20 +73,20 @@ function Shoppinglisting() {
     sessionStorage.setItem("filters", JSON.stringify(AllSelectedFilters));
   };
 
-  const handleAddtoCart = (currentProductId) => {
-    dispatch(
-      addToCart({
-        userId: user?.id,
-        productId: currentProductId,
-        quantity: 1,
-      })
-    ).then((data) => {
-      if (data?.payload.success && user?.id) {
-        dispatch(fetchCartItems({ userId: user.id }));
-        toast({ title: "Product added to cart" });
-      }
-    });
-  };
+  // const handleAddtoCart = (currentProductId) => {
+  //   dispatch(
+  //     addToCart({
+  //       userId: user?.id,
+  //       productId: currentProductId,
+  //       quantity: 1,
+  //     })
+  //   ).then((data) => {
+  //     if (data?.payload.success && user?.id) {
+  //       dispatch(fetchCartItems({ userId: user.id }));
+  //       toast({ title: "Product added to cart" });
+  //     }
+  //   });
+  // };
 
   const handleApplyFilters = () => {
     // Generate the query string and update URL
@@ -199,7 +198,6 @@ function Shoppinglisting() {
                   handleProductClick={handleProductClick}
                   key={product.id || index}
                   product={product}
-                  handleAddtoCart={handleAddtoCart}
                 />
               ))
             : null}

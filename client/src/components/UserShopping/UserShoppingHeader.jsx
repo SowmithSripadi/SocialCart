@@ -1,9 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "../ui/sheet";
 import { Button } from "../ui/button";
 import { useDispatch, useSelector } from "react-redux";
 import { shoppingViewHeaderMenuItems } from "@/config";
+import CollabSheetContent from "./collabSheet";
 
 import House from "../../assets/icons/home.png";
 import ShoppingCart from "../../assets/icons/shopping-cart.png";
@@ -115,6 +122,7 @@ const HeaderRightContent = ({ setOpenSheet }) => {
 function UserShoppingHeader() {
   const { isAuthenticated } = useSelector((state) => state.auth);
   const [openSheet, setOpenSheet] = useState(false);
+  const [openCollabSheet, setOpenCollabSheet] = useState(false);
 
   const handleSheetOpen = (open) => {
     setOpenSheet(open);
@@ -147,7 +155,14 @@ function UserShoppingHeader() {
         <div className="hidden lg:block">
           <div className="flex gap-4">
             <HeaderRightContent />
-            <SpecialButton name={"Collaborate"} />
+            <SpecialButton
+              name={"Collaborate"}
+              onClick={() => setOpenCollabSheet(true)}
+            />
+            <CollabSheetContent
+              openCollabSheet={openCollabSheet}
+              setOpenCollabSheet={setOpenCollabSheet}
+            />
           </div>
         </div>
       </div>
