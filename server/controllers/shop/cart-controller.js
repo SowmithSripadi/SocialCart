@@ -5,7 +5,7 @@ const io = require("../../socketHandler").io;
 
 // Add or Update Item in Cart
 const addToCart = async (req, res) => {
-  const { sessionId, userId, productId, quantity } = req.body;
+  let { sessionId, userId, productId, quantity } = req.body;
 
   if ((!userId && !sessionId) || !productId || quantity <= 0) {
     return res
@@ -33,6 +33,28 @@ const addToCart = async (req, res) => {
         : new Cart({ userId, items: [] });
     }
 
+    // **Session Existence Check**
+    if (cart.session_id) {
+      const sessionExists = await Session.exists({
+        session_id: cart.session_id,
+      });
+
+      if (!sessionExists) {
+        // Session has expired; remove session_id from cart
+        cart.session_id = null;
+        await cart.save();
+
+        // **Inform the user that the session has expired**
+        return res.status(200).json({
+          success: true,
+          message:
+            "The collaborative session has expired. You are now viewing your personal cart.",
+          data: cart,
+        });
+      }
+    }
+
+    // Proceed to add the item to the cart
     // Find if the product already exists in the cart
     const existingItemIndex = cart.items.findIndex(
       (item) => item.productId.toString() === productId
@@ -68,20 +90,37 @@ const fetchCartItems = async (req, res) => {
   }
 
   try {
-    const cart = sessionId
-      ? await Cart.findOne({ session_id: sessionId }).populate(
-          "items.productId",
-          "image title price salePrice"
-        )
-      : await Cart.findOne({ userId }).populate(
-          "items.productId",
-          "image title price salePrice"
-        );
+    let cart = sessionId
+      ? await Cart.findOne({ session_id: sessionId })
+      : await Cart.findOne({ userId });
 
     if (!cart)
       return res
         .status(404)
         .json({ success: false, message: "Cart not found" });
+
+    // **Session Existence Check**
+    if (cart.session_id) {
+      const sessionExists = await Session.exists({
+        session_id: cart.session_id,
+      });
+
+      if (!sessionExists) {
+        cart.session_id = null;
+        await cart.save();
+
+        // **Inform the user that the session has expired**
+        return res.status(200).json({
+          success: true,
+          message:
+            "The collaborative session has expired. You are now viewing your personal cart.",
+          data: cart,
+        });
+      }
+    }
+
+    // Proceed to fetch cart items
+    await cart.populate("items.productId", "image title price salePrice");
 
     const populateCartItems = cart.items.map((item) => ({
       productId: item.productId?._id,
@@ -113,14 +152,36 @@ const deleteCartItems = async (req, res) => {
   }
 
   try {
-    const cart = sessionId
+    let cart = sessionId
       ? await Cart.findOne({ session_id: sessionId })
       : await Cart.findOne({ userId });
+
     if (!cart)
       return res
         .status(404)
         .json({ success: false, message: "Cart not found" });
 
+    // **Session Existence Check**
+    if (cart.session_id) {
+      const sessionExists = await Session.exists({
+        session_id: cart.session_id,
+      });
+
+      if (!sessionExists) {
+        cart.session_id = null;
+        await cart.save();
+
+        // **Inform the user that the session has expired**
+        return res.status(200).json({
+          success: true,
+          message:
+            "The collaborative session has expired. You are now viewing your personal cart.",
+          data: cart,
+        });
+      }
+    }
+
+    // Proceed to delete item from cart
     cart.items = cart.items.filter(
       (item) => item.productId.toString() !== productId
     );
@@ -154,14 +215,14 @@ const deleteCartItems = async (req, res) => {
 
 // Update Cart Item Quantity
 const updateCartItems = async (req, res) => {
-  const { sessionId, userId, productId, quantity } = req.body;
+  let { sessionId, userId, productId, quantity } = req.body;
 
   if ((!userId && !sessionId) || !productId || quantity <= 0) {
     return res.status(400).json({ success: false, message: "Invalid data" });
   }
 
   try {
-    const cart = sessionId
+    let cart = sessionId
       ? await Cart.findOne({ session_id: sessionId })
       : await Cart.findOne({ userId });
 
@@ -171,6 +232,27 @@ const updateCartItems = async (req, res) => {
         .json({ success: false, message: "Cart not found" });
     }
 
+    // **Session Existence Check**
+    if (cart.session_id) {
+      const sessionExists = await Session.exists({
+        session_id: cart.session_id,
+      });
+
+      if (!sessionExists) {
+        cart.session_id = null;
+        await cart.save();
+
+        // **Inform the user that the session has expired**
+        return res.status(200).json({
+          success: true,
+          message:
+            "The collaborative session has expired. You are now viewing your personal cart.",
+          data: cart,
+        });
+      }
+    }
+
+    // Proceed to update item quantity
     const itemIndex = cart.items.findIndex(
       (item) => item.productId.toString() === productId
     );

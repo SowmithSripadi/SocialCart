@@ -1,4 +1,3 @@
-// models/session.js
 const mongoose = require("mongoose");
 
 const sessionSchema = new mongoose.Schema({
@@ -22,9 +21,21 @@ const sessionSchema = new mongoose.Schema({
     ref: "Cart",
     required: true,
   },
-  status: { type: String, enum: ["active", "expired"], default: "active" },
-  created_at: { type: Date, default: Date.now },
-  expires_at: { type: Date },
+  session_link: {
+    type: String,
+    required: true,
+  },
+  created_at: {
+    type: Date,
+    default: Date.now,
+  },
+  expires_at: {
+    type: Date,
+    required: true,
+  },
 });
+
+//  TTL index
+sessionSchema.index({ expires_at: 1 }, { expireAfterSeconds: 0 });
 
 module.exports = mongoose.model("Session", sessionSchema);
