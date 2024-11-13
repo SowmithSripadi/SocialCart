@@ -1,4 +1,3 @@
-// pages/JoinSession.js
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -9,7 +8,7 @@ const JoinSession = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { isAuthenticated, user } = useSelector((state) => state.auth);
-  const { loading, error } = useSelector((state) => state.collaborativeSession);
+  const { loading, error } = useSelector((state) => state.collabSlice);
 
   useEffect(() => {
     if (isAuthenticated && sessionId) {
@@ -19,8 +18,14 @@ const JoinSession = () => {
 
   // Handle success or error
   useEffect(() => {
-    if (!loading && !error) {
-      navigate("/shop/home"); // Redirect to main shop page
+    if (!loading) {
+      if (error) {
+        // Stay on the page and display the error
+        console.error("Error joining session:", error);
+      } else {
+        // Successfully joined session
+        navigate("/shop/home"); // Redirect to main shop page
+      }
     }
   }, [loading, error, navigate]);
 
@@ -29,7 +34,10 @@ const JoinSession = () => {
       {loading ? (
         <p>Joining session...</p>
       ) : error ? (
-        <p>Error joining session: {error}</p>
+        <p className="text-red-500">
+          Error joining session:{" "}
+          {error.message || "Session not found or expired."}
+        </p>
       ) : (
         <p>Session joined successfully! Redirecting...</p>
       )}

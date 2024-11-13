@@ -4,9 +4,7 @@ import axios from "axios";
 // Async thunk to handle session creation
 export const createSession = createAsyncThunk(
   "collaborativeSession/createSession",
-  async (userId) => {
-    // console.log(userId);
-
+  async (userId, { rejectWithValue }) => {
     try {
       const response = await axios.post(
         "http://localhost:8000/api/session/create",
@@ -14,10 +12,12 @@ export const createSession = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      return console.log(error);
+      return rejectWithValue(error.response.data.message || error.message);
     }
   }
 );
+
+// Similar adjustments for joinSession and fetchSession
 
 export const joinSession = createAsyncThunk(
   "collaborativeSession/joinSession",
@@ -73,8 +73,9 @@ const collaborativeSessionSlice = createSlice({
       })
       .addCase(createSession.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload || "Failed to create session.";
       })
+
       .addCase(joinSession.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -84,6 +85,26 @@ const collaborativeSessionSlice = createSlice({
         state.sessionId = action.payload.sessionDetails.session_id;
       })
       .addCase(joinSession.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(fetchSession.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchSession.fulfilled, (state, action) => {
+        state.loading = false;
+        if (action.payload && action.payload.data) {
+          state.sessionId = action.payload.data.session_id;
+          state.sessionLink = action.payload.data.session_link;
+        } else {
+          // No active session found
+          state.sessionId = null;
+          state.sessionLink = null;
+        }
+      })
+
+      .addCase(fetchSession.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
