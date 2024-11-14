@@ -1,7 +1,7 @@
 const Cart = require("../../models/cart");
 const Session = require("../../models/session");
 const Product = require("../../models/product");
-const io = require("../../socketHandler").io;
+const { getIO } = require("../../socketHandler");
 
 // Add or Update Item in Cart
 const addToCart = async (req, res) => {
@@ -67,10 +67,27 @@ const addToCart = async (req, res) => {
 
     await cart.save();
 
-    // Emit update if it's a session cart
-    if (sessionId) io.to(sessionId).emit("cart_updated", cart);
+    // Populate product details
+    await cart.populate("items.productId", "image title price salePrice");
 
-    res.status(200).json({ success: true, data: cart });
+    const cartItemsWithDetails = cart.items.map((item) => ({
+      productId: item.productId._id,
+      image: item.productId.image,
+      title: item.productId.title,
+      price: item.productId.price,
+      salePrice: item.productId.salePrice,
+      quantity: item.quantity,
+    }));
+
+    // Emit update if it's a session cart
+    if (sessionId) {
+      const io = getIO();
+      io.to(sessionId).emit("cart_updated", { items: cartItemsWithDetails });
+    }
+
+    res
+      .status(200)
+      .json({ success: true, data: { items: cartItemsWithDetails } });
   } catch (error) {
     console.error("Error adding item to cart:", error);
     res
@@ -202,7 +219,10 @@ const deleteCartItems = async (req, res) => {
       };
     });
 
-    if (sessionId) io.to(sessionId).emit("cart_updated", cartItemsWithDetails);
+    if (sessionId) {
+      const io = getIO();
+      io.to(sessionId).emit("cart_updated", { items: cartItemsWithDetails });
+    }
 
     res
       .status(200)
@@ -281,7 +301,10 @@ const updateCartItems = async (req, res) => {
       };
     });
 
-    if (sessionId) io.to(sessionId).emit("cart_updated", cartItemsWithDetails);
+    if (sessionId) {
+      const io = getIO();
+      io.to(sessionId).emit("cart_updated", { items: cartItemsWithDetails });
+    }
 
     res
       .status(200)

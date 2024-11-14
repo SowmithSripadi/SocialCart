@@ -1,8 +1,7 @@
 // server.js
 const express = require("express");
 const mongoose = require("mongoose");
-const http = require("http"); // Use HTTP server to attach Socket.IO
-const socketIo = require("socket.io"); // Import Socket.IO
+const http = require("http");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
@@ -30,13 +29,9 @@ mongoose
 
 const app = express();
 const server = http.createServer(app); // Create HTTP server
-const io = socketIo(server, {
-  cors: {
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST"],
-    credentials: true,
-  },
-}); // Initialize Socket.IO with the server
+
+// Initialize Socket.IO using the server instance
+socketHandler.init(server);
 
 // Middleware
 app.use(
@@ -56,12 +51,11 @@ app.use(
 app.use(cookieParser());
 app.use(express.json());
 
+// Use your routes
 app.use("/api/auth", authRouter);
 app.use("/api/admin/products", adminProductsRouter);
 app.use("/api/shop/products", shopProductsRouter);
 app.use("/api/shop/cart", cartRouter);
 app.use("/api/session", sessionRouter);
-
-socketHandler(io);
 
 server.listen(PORT, () => console.log(`Server started - ${PORT}`));
