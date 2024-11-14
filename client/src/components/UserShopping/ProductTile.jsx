@@ -15,6 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 function ShoppingProductTile({ product, handleProductClick }) {
   const { toast } = useToast();
   const { cartItems } = useSelector((state) => state.shopCart);
+  const { sessionId } = useSelector((state) => state.collabSlice);
 
   const filteredItem = (cartItems?.items || []).filter(
     (item) => item?.productId === product?._id
@@ -23,7 +24,11 @@ function ShoppingProductTile({ product, handleProductClick }) {
   const { user } = useSelector((state) => state.auth);
   const handleDeleteCartItems = (cartItem) => {
     dispatch(
-      deleteCartItems({ userId: user?.id, productId: cartItem?.productId })
+      deleteCartItems({
+        userId: user?.id,
+        productId: cartItem?.productId,
+        sessionId: sessionId || undefined,
+      })
     );
   };
 
@@ -31,12 +36,17 @@ function ShoppingProductTile({ product, handleProductClick }) {
     dispatch(
       addToCart({
         userId: user?.id,
+        sessionId: sessionId || undefined,
         productId: currentProductId,
         quantity: 1,
       })
     ).then((data) => {
       if (data?.payload.success && user?.id) {
-        dispatch(fetchCartItems({ userId: user.id }));
+        if (sessionId) {
+          dispatch(fetchCartItems({ sessionId: sessionId }));
+        } else if (user?.id) {
+          dispatch(fetchCartItems({ userId: user.id }));
+        }
         toast({ title: "Product added to cart" });
       }
     });

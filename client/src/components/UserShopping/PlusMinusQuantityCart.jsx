@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 
 function PlusMinusQuantityCart({ cartItem, handleDeleteCartItems }) {
   const { user } = useSelector((slice) => slice.auth);
+  const { sessionId } = useSelector((slice) => slice.collabSlice);
   const dispatch = useDispatch();
   const handleUpdateQuantity = (cartItem, value) => {
     if (value === "minus" && cartItem.quantity <= 1) {
@@ -15,7 +16,7 @@ function PlusMinusQuantityCart({ cartItem, handleDeleteCartItems }) {
       dispatch(
         updateCartItems({
           userId: user?.id,
-          sessionId: undefined, // If session.id is undefined, this will just be omitted
+          sessionId: sessionId || undefined, // If session.id is undefined, this will just be omitted
           productId: cartItem?.productId,
           quantity:
             value === "plus" ? cartItem?.quantity + 1 : cartItem?.quantity - 1,

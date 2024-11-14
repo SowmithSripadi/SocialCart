@@ -7,13 +7,14 @@ import { useDispatch, useSelector } from "react-redux";
 
 function UserCartItemsContent({ cartItem }) {
   const { user } = useSelector((slice) => slice.auth);
+  const { sessionId } = useSelector((slice) => slice.collabSlice);
   const dispatch = useDispatch();
 
   const handleDeleteCartItems = (cartItem) => {
     dispatch(
       deleteCartItems({
         userId: user?.id,
-        sessionId: undefined,
+        sessionId: sessionId || undefined,
         productId: cartItem?.productId,
       })
     );

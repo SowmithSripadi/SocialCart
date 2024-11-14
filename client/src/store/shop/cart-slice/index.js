@@ -7,6 +7,7 @@ const initialState = {
   },
   isLoading: false,
   sessionId: null, // Track sessionId to determine if it's a collaborative cart
+  userCount: 0,
 };
 
 // Add to Cart Thunk with optional sessionId
@@ -28,8 +29,8 @@ export const fetchCartItems = createAsyncThunk(
   "cart/fetchCartItems",
   async ({ userId, sessionId }) => {
     const endpoint = sessionId
-      ? `http://localhost:8000/api/shop/cart/get-session/${sessionId}`
-      : `http://localhost:8000/api/shop/cart/get/${userId}`;
+      ? `http://localhost:8000/api/shop/cart/get/session/${sessionId}`
+      : `http://localhost:8000/api/shop/cart/get/user/${userId}`;
     const res = await axios.get(endpoint);
     return res.data;
   }
@@ -77,6 +78,12 @@ const shoppingCartSlice = createSlice({
       state.sessionId = null;
       state.cartItems.items = [];
     },
+    updateSessionCartItems: (state, action) => {
+      state.cartItems.items = action.payload;
+    },
+    updateUserCount: (state, action) => {
+      state.userCount = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -85,7 +92,7 @@ const shoppingCartSlice = createSlice({
       })
       .addCase(addToCart.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.cartItems = action.payload.data;
+        state.cartItems.items = action.payload.data.items;
       })
       .addCase(addToCart.rejected, (state) => {
         state.isLoading = false;
@@ -95,7 +102,7 @@ const shoppingCartSlice = createSlice({
       })
       .addCase(updateCartItems.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.cartItems = action.payload.data;
+        state.cartItems.items = action.payload.data.items;
       })
       .addCase(updateCartItems.rejected, (state) => {
         state.isLoading = false;
@@ -105,7 +112,7 @@ const shoppingCartSlice = createSlice({
       })
       .addCase(deleteCartItems.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.cartItems = action.payload.data;
+        state.cartItems.items = action.payload.data.items;
       })
       .addCase(deleteCartItems.rejected, (state) => {
         state.isLoading = false;
@@ -123,5 +130,10 @@ const shoppingCartSlice = createSlice({
   },
 });
 
-export const { setSessionId, clearSessionId } = shoppingCartSlice.actions;
+export const {
+  setSessionId,
+  clearSessionId,
+  updateSessionCartItems,
+  updateUserCount,
+} = shoppingCartSlice.actions;
 export default shoppingCartSlice.reducer;

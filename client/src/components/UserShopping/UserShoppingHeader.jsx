@@ -54,6 +54,7 @@ const HeaderRightContent = ({ setOpenSheet }) => {
   let initials = FLName.map((name) => name[0].toUpperCase()).join("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { sessionId } = useSelector((state) => state.collabSlice);
 
   const [openCartSheet, setOpenCartSheet] = useState(false);
   const { cartItems } = useSelector((state) => state.shopCart);
@@ -63,10 +64,12 @@ const HeaderRightContent = ({ setOpenSheet }) => {
   };
 
   useEffect(() => {
-    if (user?.id) {
+    if (sessionId) {
+      dispatch(fetchCartItems({ sessionId: sessionId }));
+    } else if (user?.id) {
       dispatch(fetchCartItems({ userId: user.id }));
     }
-  }, [dispatch]);
+  }, [dispatch, sessionId, user?.id]);
 
   return (
     <div className="flex lg:items-center lg:flex-row flex-col gap-2">

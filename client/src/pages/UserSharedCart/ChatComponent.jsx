@@ -1,4 +1,3 @@
-// ChatComponent.js
 import React, { useState, useEffect } from "react";
 import io from "socket.io-client";
 import { Button } from "@/components/ui/button";
@@ -15,15 +14,17 @@ const ChatComponent = ({ sessionId }) => {
     if (sessionId) {
       socket.emit("join_session", sessionId);
 
-      socket.on("receive_message", (message) => {
+      const handleMessage = (message) => {
         setMessages((prevMessages) => [...prevMessages, message]);
-      });
-    }
+      };
 
-    return () => {
-      socket.emit("leave_session", sessionId);
-      socket.off("receive_message");
-    };
+      socket.on("receive_message", handleMessage);
+
+      return () => {
+        socket.emit("leave_session", sessionId);
+        socket.off("receive_message", handleMessage);
+      };
+    }
   }, [sessionId]);
 
   const sendMessage = () => {
@@ -37,22 +38,8 @@ const ChatComponent = ({ sessionId }) => {
         timestamp: new Date(),
       };
       socket.emit("send_message", message);
-      setMessages((prevMessages) => [...prevMessages, message]);
       setInput("");
     }
-  };
-
-  const handleProductShare = (product) => {
-    const message = {
-      sessionId,
-      senderId: user.id,
-      senderName: user.name,
-      type: "product",
-      content: product, // Product object or ID
-      timestamp: new Date(),
-    };
-    socket.emit("send_message", message);
-    setMessages((prevMessages) => [...prevMessages, message]);
   };
 
   return (
@@ -84,13 +71,12 @@ const ChatComponent = ({ sessionId }) => {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Type a message"
+          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
         />
         <Button onClick={sendMessage} className="ml-2">
           Send
         </Button>
       </div>
-      {/* Future product sharing UI */}
-      {/* <Button onClick={() => handleProductShare(selectedProduct)}>Share Product</Button> */}
     </div>
   );
 };

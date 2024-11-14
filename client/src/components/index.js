@@ -8,6 +8,7 @@ import CheckAuth from "./common/Check-auth";
 import ProductFilter from "./UserShopping/ProductFilter";
 import ShoppingProductTile from "./UserShopping/ProductTile";
 import ProductDetailsDialog from "./UserShopping/ProductDetails";
+import CollaborativeCartProvider from "./SharedCart/CollaborativeCartProvider";
 export {
   UserAuthLayout,
   AdminHeader,
@@ -19,4 +20,5 @@ export {
   ProductFilter,
   ShoppingProductTile,
   ProductDetailsDialog,
+  CollaborativeCartProvider,
 };

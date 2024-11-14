@@ -44,6 +44,7 @@ function Shoppinglisting() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [openDialog, setOpenDialog] = useState(false);
   const { user } = useSelector((state) => state.auth);
+  const { sessionId } = useSelector((state) => state.collabSlice);
   const { toast } = useToast();
 
   const handleSort = (value) => {
@@ -77,12 +78,17 @@ function Shoppinglisting() {
     dispatch(
       addToCart({
         userId: user?.id,
+        sessionId: sessionId || null,
         productId: currentProductId,
         quantity: 1,
       })
     ).then((data) => {
       if (data?.payload.success && user?.id) {
-        dispatch(fetchCartItems({ userId: user.id }));
+        if (sessionId) {
+          dispatch(fetchCartItems({ sessionId: sessionId }));
+        } else if (user?.id) {
+          dispatch(fetchCartItems({ userId: user.id }));
+        }
         toast({ title: "Product added to cart" });
       }
     });

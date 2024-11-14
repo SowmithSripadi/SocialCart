@@ -1,10 +1,11 @@
 // CollabSheetContent.js
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../ui/sheet";
 import { Button } from "../ui/button";
 import { useDispatch, useSelector } from "react-redux";
 import { createSession, fetchSession } from "@/store/shop/session-slice";
 import ChatComponent from "@/pages/UserSharedCart/ChatComponent"; // Adjust the import path as necessary
+import { Copy } from "lucide-react";
 
 const CollabSheetContent = ({ openCollabSheet, setOpenCollabSheet }) => {
   const dispatch = useDispatch();
@@ -12,6 +13,9 @@ const CollabSheetContent = ({ openCollabSheet, setOpenCollabSheet }) => {
     (state) => state.collabSlice
   );
   const { user } = useSelector((state) => state.auth);
+  const [copied, setCopied] = useState();
+  const { userCount } = useSelector((state) => state.collabSlice);
+  console.log(userCount);
 
   const handleGenerateLink = () => {
     dispatch(createSession({ userId: user?.id }));
@@ -23,8 +27,12 @@ const CollabSheetContent = ({ openCollabSheet, setOpenCollabSheet }) => {
     }
   }, [user, dispatch]);
 
-  console.log(sessionId, "sessionId");
-  console.log(sessionLink, "sessionLink");
+  const handleCopy = () => {
+    navigator.clipboard.writeText(sessionLink).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
 
   return (
     <Sheet
@@ -42,21 +50,28 @@ const CollabSheetContent = ({ openCollabSheet, setOpenCollabSheet }) => {
                 ? "Generating Link..."
                 : "Generate Link for Collaboration"}
             </Button>
-          ) : (
-            <div>
-              <p>Share this link with your friend:</p>
-              <a href={sessionLink} target="_blank" rel="noopener noreferrer">
-                {sessionLink}
-              </a>
+          ) : !(userCount > 1) ? (
+            <div className=" break-words">
+              <p className="mb-2">Share this link with your friend:</p>
+              <span className="text-gray-500">{sessionLink}</span>
+              <div className="flex  items-center mt-2 gap-4">
+                <span onClick={handleCopy} className="cursor-pointer">
+                  Copy Link
+                </span>
+                <Copy onClick={handleCopy} className="cursor-pointer mt-2" />
+                {copied && <span className="text-green-500">Copied!</span>}
+              </div>
             </div>
+          ) : (
+            <span>{userCount} user's connected</span>
           )}
 
           {error && <p className="text-red-500 mt-2">Error: {error}</p>}
 
           {sessionId && (
-            <div className="mt-4 flex-1 flex flex-col">
-              <h2>Chat with Your Friend</h2>
-              <div className="flex-1 overflow-auto">
+            <div className="absolute bottom-0 left-0 w-full h-[400px] rounded-lg flex flex-col">
+              <h2 className="mb-2 ml-4">Chat with Your Friend</h2>
+              <div className="flex-1 overflow-auto p-4 bg-gray-100">
                 <ChatComponent sessionId={sessionId} />
               </div>
             </div>
