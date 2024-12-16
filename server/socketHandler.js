@@ -1,5 +1,6 @@
 // socketHandler.js
 const socketIo = require("socket.io");
+const FRONTEND_HOST = process.env.FRONTEND_HOST;
 
 let ioInstance;
 
@@ -11,7 +12,7 @@ const getNumberOfClientsInRoom = (roomId) => {
 function init(server) {
   ioInstance = socketIo(server, {
     cors: {
-      origin: "http://localhost:5173", // Replace with your frontend URL
+      origin: FRONTEND_HOST,
       methods: ["GET", "POST"],
       credentials: true,
     },

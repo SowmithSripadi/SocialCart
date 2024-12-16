@@ -39,7 +39,7 @@ const createSession = async (req, res) => {
       await cart.save();
     }
 
-    const frontendHost = process.env.FRONTEND_HOST || "http://localhost:5173";
+    const frontendHost = process.env.FRONTEND_HOST;
     const sessionLink = `${frontendHost}/shop/session/join/${sessionId}`;
 
     session = await Session.create({

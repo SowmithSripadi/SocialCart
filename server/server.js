@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const http = require("http");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+require("dotenv").config();
 
 // Import routes
 const authRouter = require("./routes/auth/auth-routes");
@@ -16,12 +17,12 @@ const sessionRouter = require("./routes/session/sessionRoutes");
 const socketHandler = require("./socketHandler");
 
 const PORT = process.env.PORT || 8000;
+const mongoURL = process.env.MONGODB_CONNECTION_URL;
+const FRONTEND_HOST = process.env.FRONTEND_HOST;
 
 // MongoDB Connection
 mongoose
-  .connect(
-    "mongodb+srv://sripadisowmith067:Mzlapq%40321@cluster0.gdo3j.mongodb.net/"
-  )
+  .connect(mongoURL)
   .then(() => console.log("MongoDB Connected"))
   .catch((error) => {
     console.log(error);
@@ -36,7 +37,7 @@ socketHandler.init(server);
 // Middleware
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: FRONTEND_HOST,
     methods: ["GET", "POST", "DELETE", "PUT"],
     allowedHeaders: [
       "Content-Type",
