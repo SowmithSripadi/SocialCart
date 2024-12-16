@@ -37,6 +37,8 @@ Follow these steps to get a local copy of the project up and running.
 
 - [Node.js](https://nodejs.org/) 
 - [MongoDB](https://www.mongodb.com/)
+- [TailwindCSS](https://tailwindcss.com/)
+- [ReactJS](https://react.dev/)
 
 ### Steps
 
@@ -44,25 +46,39 @@ Follow these steps to get a local copy of the project up and running.
 
    ```bash
    git clone https://github.com/yourusername/SocialCart.git
-   cd SocialCart
    ```
 2. **Install dependencies**
 
    ```bash
+   #Server
+   cd Server
    npm install
    ```
-3. **Set up environment variables**
-   (coming soon)
    ```bash
-   PORT=5000
-   MONGODB_URI=your_mongodb_connection_string
-   REDIS_HOST=localhost
-   REDIS_PORT=6379
-   JWT_SECRET=your_jwt_secret
+   #Client
+   cd Client
+   npm install
    ```
-4. **Run the application**
+4. **Set up environment variables**
    ```bash
-   npm start
+   #Client
+   VITE_BACKEND_API_URL = http://localhost:8000/api
+   VITE_BACKEND_URL = http://localhost:8000
+
+   ```
+   ```bash
+   #Server
+   MONGODB_CONNECTION_URL = PasteYourMongoDBConnectionString
+   FRONTEND_HOST = http://localhost:5173
+   ```
+5. **Run the application**
+   ```bash
+   #Client
+   npm run dev
+   ```
+   ```bash
+   #Server
+   npm run dev
    ```
 
 ## 📸 Screenshots
