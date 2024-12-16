@@ -29,6 +29,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { checkIfUserLoggedIn } from "./store/Userauth-slice/index";
 import { CollaborativeCartProvider } from "./components";
+import { Navigate } from "react-router-dom";
 
 function App() {
   const { isAuthenticated, user, isLoading } = useSelector(
@@ -45,6 +46,17 @@ function App() {
     <CollaborativeCartProvider>
       <div className="flex flex-col overflow-hidden bg-white">
         <Routes>
+          <Route
+            path="/"
+            element={
+              isAuthenticated ? (
+                <Navigate to="/shop/home" replace />
+              ) : (
+                <Navigate to="/auth/login" replace />
+              )
+            }
+          />
+
           <Route
             path="/auth"
             element={

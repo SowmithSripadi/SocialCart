@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import io from "socket.io-client";
 import { Button } from "@/components/ui/button";
 import { useSelector } from "react-redux";
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
-const socket = io("http://localhost:8000"); // Adjust the backend URL
+const socket = io(`${BASE_URL}`); // Adjust the backend URL
 
 const ChatComponent = ({ sessionId }) => {
   const [messages, setMessages] = useState([]);

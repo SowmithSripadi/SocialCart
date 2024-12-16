@@ -15,7 +15,7 @@ const CollabSheetContent = ({ openCollabSheet, setOpenCollabSheet }) => {
   const { user } = useSelector((state) => state.auth);
   const [copied, setCopied] = useState();
   const { userCount } = useSelector((state) => state.collabSlice);
-  console.log(userCount);
+  // console.log(userCount);
 
   const handleGenerateLink = () => {
     dispatch(createSession({ userId: user?.id }));

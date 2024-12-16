@@ -14,8 +14,12 @@ import shoesIcon from "../../assets/icons/shoes.png";
 import { Card, CardContent } from "@/components/ui/card";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAllFilteredProducts } from "@/store/shop/products-slice";
+import {
+  fetchAllFilteredProducts,
+  fetchProdutDetails,
+} from "@/store/shop/products-slice";
 import { ShoppingProductTile } from "@/components";
+import { ProductDetailsDialog } from "@/components";
 
 import brand1 from "../../assets/brandIcons/1.webp";
 import brand2 from "../../assets/brandIcons/2.webp";
@@ -27,6 +31,7 @@ import brand7 from "../../assets/brandIcons/7.webp";
 import brand8 from "../../assets/brandIcons/8.webp";
 import brand9 from "../../assets/brandIcons/9.webp";
 import brand10 from "../../assets/brandIcons/10.webp";
+import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
 
 const categories = [
   { id: "men", label: "Men", icon: menIcon },
@@ -63,6 +68,10 @@ function ShoppingHome() {
   const { productList } = useSelector((state) => state.shopProducts);
   const [brandVisibleStartIndex, setBrandVisibleStartIndex] = useState(0);
   const [brandToShow, setBrandToShow] = useState(5);
+  const { productDetails } = useSelector((state) => state.shopProducts);
+  const { user } = useSelector((state) => state.auth);
+  const { sessionId } = useSelector((state) => state.collabSlice);
+  const [open, setOpen] = useState(false);
   const visibleBrands = brands.slice(
     brandVisibleStartIndex,
     brandVisibleStartIndex + brandToShow
@@ -85,13 +94,38 @@ function ShoppingHome() {
     );
   }, []);
 
-  // Set up automatic slide rotation
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prevSlide) => (prevSlide + 1) % slides.length);
     }, 5000);
     return () => clearInterval(timer);
   }, [slides.length]);
+
+  const handleProductClick = (productId) => {
+    dispatch(fetchProdutDetails(productId));
+  };
+
+  useEffect(() => {
+    if (productDetails != null) setOpen(true);
+  }, [productDetails]);
+
+  const handleAddtoCart = (currentProductId) => {
+    dispatch(
+      addToCart({
+        userId: user?.id,
+        sessionId: sessionId || null,
+        productId: currentProductId,
+        quantity: 1,
+      })
+    ).then((data) => {
+      if (data?.payload.success && user?.id) {
+        if (sessionId) {
+          dispatch(fetchCartItems({ sessionId: sessionId }));
+        }
+        dispatch(fetchCartItems({ userId: user.id }));
+      }
+    });
+  };
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -207,10 +241,17 @@ function ShoppingHome() {
                   <ShoppingProductTile
                     key={productItem._id}
                     product={productItem}
+                    handleProductClick={handleProductClick}
                   />
                 ))
               : null}
           </div>
+          <ProductDetailsDialog
+            open={open}
+            setOpen={setOpen}
+            productDetails={productDetails}
+            handleAddtoCart={handleAddtoCart}
+          />
         </div>
       </section>
     </div>

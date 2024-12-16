@@ -10,11 +10,13 @@ const initialState = {
   userCount: 0,
 };
 
+const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL;
+
 // Add to Cart Thunk with optional sessionId
 export const addToCart = createAsyncThunk(
   "cart/addToCart",
   async ({ userId, sessionId, productId, quantity }) => {
-    const res = await axios.post("http://localhost:8000/api/shop/cart/add", {
+    const res = await axios.post(`${API_BASE_URL}/shop/cart/add`, {
       userId,
       sessionId,
       productId,
@@ -29,8 +31,8 @@ export const fetchCartItems = createAsyncThunk(
   "cart/fetchCartItems",
   async ({ userId, sessionId }) => {
     const endpoint = sessionId
-      ? `http://localhost:8000/api/shop/cart/get/session/${sessionId}`
-      : `http://localhost:8000/api/shop/cart/get/user/${userId}`;
+      ? `${API_BASE_URL}/shop/cart/get/session/${sessionId}`
+      : `${API_BASE_URL}/shop/cart/get/user/${userId}`;
     const res = await axios.get(endpoint);
     return res.data;
   }
@@ -41,8 +43,8 @@ export const deleteCartItems = createAsyncThunk(
   "cart/deleteCartItems",
   async ({ userId, sessionId, productId }) => {
     const endpoint = sessionId
-      ? `http://localhost:8000/api/shop/cart/session/${sessionId}/${productId}`
-      : `http://localhost:8000/api/shop/cart/${userId}/${productId}`;
+      ? `${API_BASE_URL}/shop/cart/session/${sessionId}/${productId}`
+      : `${API_BASE_URL}/shop/cart/${userId}/${productId}`;
     const res = await axios.delete(endpoint);
     return res.data;
   }
@@ -52,15 +54,12 @@ export const deleteCartItems = createAsyncThunk(
 export const updateCartItems = createAsyncThunk(
   "cart/updateCartItems",
   async ({ userId, sessionId, productId, quantity }) => {
-    const res = await axios.put(
-      "http://localhost:8000/api/shop/cart/update-cart",
-      {
-        userId,
-        sessionId,
-        productId,
-        quantity,
-      }
-    );
+    const res = await axios.put(`${API_BASE_URL}/shop/cart/update-cart`, {
+      userId,
+      sessionId,
+      productId,
+      quantity,
+    });
     return res.data;
   }
 );

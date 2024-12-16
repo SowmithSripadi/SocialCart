@@ -4,7 +4,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateSessionCartItems } from "@/store/shop/cart-slice";
 import { updateUserCount } from "@/store/shop/cart-slice";
 
-const socket = io("http://localhost:8000", {
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
+const socket = io(`${BASE_URL}`, {
   transports: ["websocket"],
   withCredentials: true,
 });

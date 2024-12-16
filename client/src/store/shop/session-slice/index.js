@@ -1,13 +1,14 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
+const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL;
 // Async thunk to handle session creation
 export const createSession = createAsyncThunk(
   "collaborativeSession/createSession",
   async (userId, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/session/create",
+        `${API_BASE_URL}/session/create`,
         userId
       );
       return response.data;
@@ -24,7 +25,7 @@ export const joinSession = createAsyncThunk(
   async ({ userId, sessionId }, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        `http://localhost:8000/api/session/join/${sessionId}`,
+        `${API_BASE_URL}/session/join/${sessionId}`,
         { guestUserId: userId }
       );
       return response.data;
@@ -37,7 +38,7 @@ export const joinSession = createAsyncThunk(
 export const fetchSession = createAsyncThunk(
   "collaborativeSession/fetchSession",
   async ({ userId }) => {
-    const response = await axios.get("http://localhost:8000/api/session/get", {
+    const response = await axios.get(`${API_BASE_URL}/session/get`, {
       params: { userId },
     });
     return response.data;
