@@ -24,8 +24,10 @@ function ProductFilter({
         {Object.keys(filterOptions).map((keyItem) => (
           <Fragment key={keyItem}>
             <div>
-              <h3 className="text-base font-bold">{keyItem}</h3>
-              <div className="grid grid-cols-2 mt-2 gap-2">
+              <h3 className="text-base font-bold">
+                {keyItem === "category" ? "Category" : keyItem === "brand" ? "Brand" : keyItem}
+              </h3>
+              <div className={`grid grid-cols-2 mt-2 ${keyItem === "brand" ? "gap-4" : "gap-2"}`}>
                 {filterOptions[keyItem].map((option) => (
                   <Label
                     key={option.id}

@@ -2,6 +2,7 @@ import { HousePlug, LogOut, Menu, ShoppingCart, UserCog } from "lucide-react";
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Button } from "../ui/button";
+import SpecialButton from "../ui/specialButton";
 import { useDispatch, useSelector } from "react-redux";
 import { shoppingViewHeaderMenuItems } from "@/config";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
@@ -12,6 +13,28 @@ import { useEffect, useState } from "react";
 import { fetchCartItems } from "@/store/shop/cart-slice";
 import { Label } from "../ui/label";
 import CollabSheetContent from "../UserShopping/collabSheet";
+
+// Inline truck icon (Tabler) as React component for the brand mark
+const TruckIcon = (props) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={props.className}
+  >
+    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+    <path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+    <path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+    <path d="M5 17h-2v-4m-1 -8h11v12m-4 0h6m4 0h2v-6h-8m0 -5h5l3 5" />
+    <path d="M3 9l4 0" />
+  </svg>
+);
 
 function MenuItems() {
   const navigate = useNavigate();
@@ -35,9 +58,13 @@ function MenuItems() {
   }
 
   return (
-    <nav className="flex flex-col mb-3 lg:mb-0 lg:items-center gap-6 lg:flex-row">
+    <nav className="flex flex-col mb-3 lg:mb-0 lg:items-center gap-3 lg:gap-5 lg:flex-row font-robotoFlex">
       {shoppingViewHeaderMenuItems.map((menuItem) => (
-        <Label onClick={() => handleNavigate(menuItem)} className="text-sm font-medium cursor-pointer" key={menuItem.id}>
+        <Label
+          onClick={() => handleNavigate(menuItem)}
+          className="cursor-pointer text-[0.90rem] font-semibold  text-gray-700 hover:text-foreground px-2 py-2 rounded-full hover:bg-muted transition-colors"
+          key={menuItem.id}
+        >
           {menuItem.label}
         </Label>
       ))}
@@ -79,16 +106,18 @@ function HeaderRightContent() {
           cartItems={cartItems && cartItems.items && cartItems.items.length > 0 ? cartItems.items : []}
         />
       </Sheet>
-      <Button onClick={() => setOpenCollabSheet(true)}>Collaborate</Button>
+      <div onClick={() => setOpenCollabSheet(true)}>
+        <SpecialButton name={"Collaborate"} onClick={() => setOpenCollabSheet(true)} />
+      </div>
       <CollabSheetContent openCollabSheet={openCollabSheet} setOpenCollabSheet={setOpenCollabSheet} />
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Avatar className="bg-black">
+          <Avatar className="bg-black cursor-pointer">
             <AvatarFallback className="bg-black text-white font-extrabold">{user?.name?.[0]?.toUpperCase() || user?.userName?.[0]?.toUpperCase()}</AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
-        <DropdownMenuContent side="right" className="w-56">
+        <DropdownMenuContent side="bottom" align="end" sideOffset={8} className="w-56">
           <DropdownMenuLabel>Logged in as {user?.name || user?.userName}</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => navigate("/shop/account")}> 
@@ -108,11 +137,11 @@ function HeaderRightContent() {
 
 function ShoppingHeader() {
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-background">
-      <div className="flex h-16 items-center justify-between px-4 md:px-6">
-        <Link to="/shop/home" className="flex items-center gap-2">
-          <HousePlug className="h-6 w-6" />
-          <span className="font-bold">Ecommerce</span>
+    <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
+      <div className="flex h-20 items-center justify-between px-4 md:px-8">
+        <Link to="/shop/home" className="flex items-center gap-2 md:gap-3">
+          <TruckIcon className="h-6 w-6 md:h-7 md:w-7" />
+          <span className="font-extrabold tracking-tight text-lg md:text-xl font-space">SocialCart</span>
         </Link>
         <Sheet>
           <SheetTrigger asChild>

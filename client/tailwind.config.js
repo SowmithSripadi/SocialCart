@@ -3,6 +3,10 @@ module.exports = {
     content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
   	extend: {
+		fontFamily: {
+			space: ["'Space Grotesk'", "ui-sans-serif", "system-ui", "sans-serif"],
+			robotoFlex: ["'Roboto Flex'", "ui-sans-serif", "system-ui", "sans-serif"],
+		},
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
