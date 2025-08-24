@@ -1,7 +1,6 @@
 const cloudinary = require("cloudinary").v2;
 const multer = require("multer");
 
-// Configure Cloudinary using environment variables
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -10,14 +9,15 @@ cloudinary.config({
 
 const storage = new multer.memoryStorage();
 
-async function imageUploadUtility(file) {
+async function imageUploadUtil(file) {
   const result = await cloudinary.uploader.upload(file, {
     resource_type: "auto",
   });
-
   return result;
 }
 
-const uploads = multer({ storage });
+const upload = multer({ storage });
 
-module.exports = { uploads, imageUploadUtility };
+module.exports = { upload, imageUploadUtil };
+
+

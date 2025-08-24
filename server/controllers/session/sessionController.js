@@ -1,6 +1,7 @@
 const Session = require("../../models/session");
 const Cart = require("../../models/cart");
 const mongoose = require("mongoose");
+const { getIO } = require("../../socketHandler");
 
 // Controller to create or reuse a session
 const createSession = async (req, res) => {
@@ -39,8 +40,11 @@ const createSession = async (req, res) => {
       await cart.save();
     }
 
-    const frontendHost = process.env.FRONTEND_HOST;
-    const sessionLink = `${frontendHost}/shop/session/join/${sessionId}`;
+    const frontendHosts = process.env.FRONTEND_HOSTS || process.env.FRONTEND_HOST || "";
+    const defaultFrontend = frontendHosts.split(",").map((s) => s.trim()).filter(Boolean)[0] || "http://localhost:5173";
+    const requestOrigin = req.headers.origin;
+    const originToUse = requestOrigin && frontendHosts.includes(requestOrigin) ? requestOrigin : defaultFrontend;
+    const sessionLink = `${originToUse}/shop/session/join/${sessionId}`;
 
     session = await Session.create({
       session_id: sessionId,
@@ -108,8 +112,12 @@ const fetchSession = async (req, res) => {
 
     // console.log(session, "session");
 
-    if (!session)
-      return res.status(404).json({ message: "No active session found" });
+    if (!session) {
+      return res.status(200).json({
+        message: "No active session found",
+        data: null,
+      });
+    }
 
     return res.status(200).json({
       message: "Session details",
@@ -122,3 +130,68 @@ const fetchSession = async (req, res) => {
 };
 
 module.exports = { createSession, joinSession, fetchSession };
+
+// End a collaborative session (host only)
+const endSession = async (req, res) => {
+  try {
+    const { userId } = req.body; // host id
+    const hostUserId = new mongoose.Types.ObjectId(userId);
+
+    const session = await Session.findOne({ host_user_id: hostUserId });
+    if (!session)
+      return res.status(404).json({ message: "Active session not found" });
+
+    // Clear session_id from the host cart
+    const cart = await Cart.findById(session.cart_id);
+    if (cart) {
+      cart.session_id = null;
+      await cart.save();
+    }
+
+    const sessionId = session.session_id;
+    await Session.deleteOne({ _id: session._id });
+
+    // Notify clients in the room that session has ended
+    try {
+      const io = getIO();
+      io.to(sessionId.toString()).emit("session_ended", {});
+    } catch (e) {
+      // socket not initialized, ignore
+    }
+
+    return res.status(200).json({ message: "Session ended" });
+  } catch (error) {
+    console.error("Error ending session:", error);
+    return res.status(500).json({ message: "Failed to end session", error });
+  }
+};
+
+// Leave a collaborative session (guest leaves)
+const leaveSession = async (req, res) => {
+  try {
+    const { userId } = req.body; // guest id
+    const guestId = new mongoose.Types.ObjectId(userId);
+
+    const session = await Session.findOne({ guest_user_id: guestId });
+    if (!session)
+      return res.status(404).json({ message: "No session joined by user" });
+
+    session.guest_user_id = null;
+    await session.save();
+
+    // Broadcast updated user count via socket by emitting leave from server
+    try {
+      const io = getIO();
+      const roomId = session.session_id.toString();
+      io.to(roomId).emit("user_count_updated", { userCount: 1 });
+    } catch (e) {}
+
+    return res.status(200).json({ message: "Left session" });
+  } catch (error) {
+    console.error("Error leaving session:", error);
+    return res.status(500).json({ message: "Failed to leave session", error });
+  }
+};
+
+module.exports.endSession = endSession;
+module.exports.leaveSession = leaveSession;

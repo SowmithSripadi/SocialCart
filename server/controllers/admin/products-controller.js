@@ -1,11 +1,19 @@
-const { imageUploadUtility } = require("../../config/cloudinary");
+// Prefer helpers/cloudinary; fallback to config for backward compat
+let imageUploadUtil;
+try {
+  ({ imageUploadUtil } = require("../../helpers/cloudinary"));
+} catch (e) {
+  try {
+    ({ imageUploadUtility: imageUploadUtil } = require("../../config/cloudinary"));
+  } catch (err) {}
+}
 const Product = require("../../models/product");
 
 const handleImageUpload = async (req, res) => {
   try {
     const b64 = Buffer.from(req.file.buffer).toString("base64");
     const url = "data:" + req.file.mimetype + ";base64," + b64;
-    const result = await imageUploadUtility(url);
+    const result = await imageUploadUtil(url);
 
     res.json({
       success: true,
@@ -20,6 +28,13 @@ const handleImageUpload = async (req, res) => {
   }
 };
 
+// Helper to coerce various truthy/falsey inputs to boolean
+function toBoolean(val) {
+  if (typeof val === "boolean") return val;
+  if (typeof val === "string") return val.toLowerCase() === "true";
+  return false;
+}
+
 //adding a new product
 const addProduct = async (req, res) => {
   try {
@@ -32,6 +47,7 @@ const addProduct = async (req, res) => {
       price,
       salePrice,
       totalStock,
+      isFeatured,
     } = req.body;
     const newlyCreatedProduct = new Product({
       image,
@@ -42,12 +58,13 @@ const addProduct = async (req, res) => {
       price,
       salePrice,
       totalStock,
+      isFeatured: toBoolean(isFeatured),
     });
 
     await newlyCreatedProduct.save();
     res.status(201).json({
       success: true,
-      message: "User created",
+      message: "Product created",
     });
   } catch (error) {
     console.log(error);
@@ -88,6 +105,7 @@ const editProduct = async (req, res) => {
       price,
       salePrice,
       totalStock,
+      isFeatured,
     } = req.body;
 
     const productToBeEdited = await Product.findById(id);
@@ -99,7 +117,7 @@ const editProduct = async (req, res) => {
 
     productToBeEdited.image = image || productToBeEdited.image;
     productToBeEdited.title = title || productToBeEdited.title;
-    productToBeEdited.description = description || description.image;
+    productToBeEdited.description = description || productToBeEdited.description;
     productToBeEdited.category = category || productToBeEdited.category;
     productToBeEdited.brand = brand || productToBeEdited.brand;
     productToBeEdited.price =
@@ -107,6 +125,9 @@ const editProduct = async (req, res) => {
     productToBeEdited.salePrice =
       salePrice === "" ? 0 : salePrice || productToBeEdited.salePrice;
     productToBeEdited.totalStock = totalStock || productToBeEdited.totalStock;
+    if (typeof isFeatured !== "undefined") {
+      productToBeEdited.isFeatured = toBoolean(isFeatured);
+    }
 
     await productToBeEdited.save();
     res.status(200).json({

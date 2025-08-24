@@ -1,8 +1,15 @@
 // socketHandler.js
 const socketIo = require("socket.io");
 const FRONTEND_HOST = process.env.FRONTEND_HOST;
+const FRONTEND_HOSTS = process.env.FRONTEND_HOSTS;
+const allowedOrigins = (FRONTEND_HOSTS || FRONTEND_HOST || "")
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
 
 let ioInstance;
+
+// Removed username tracking per user: we only track user counts now
 
 const getNumberOfClientsInRoom = (roomId) => {
   const room = ioInstance.sockets.adapter.rooms.get(roomId);
@@ -12,7 +19,7 @@ const getNumberOfClientsInRoom = (roomId) => {
 function init(server) {
   ioInstance = socketIo(server, {
     cors: {
-      origin: FRONTEND_HOST,
+      origin: allowedOrigins,
       methods: ["GET", "POST"],
       credentials: true,
     },
@@ -21,8 +28,12 @@ function init(server) {
   ioInstance.on("connection", (socket) => {
     console.log("New client connected:", socket.id);
 
-    socket.on("join_session", (sessionId) => {
+    socket.on("join_session", (payload) => {
+      const sessionId =
+        typeof payload === "string" ? payload : payload?.sessionId;
+
       socket.join(sessionId);
+      socket.data.sessionId = sessionId;
       console.log(`User joined session: ${sessionId}`);
 
       // Now, sessionId is defined, so we can use it here
@@ -33,6 +44,7 @@ function init(server) {
       ioInstance
         .to(sessionId)
         .emit("user_count_updated", { userCount: numClients });
+      // removed usernames event
     });
 
     socket.on("send_message", (data) => {
@@ -45,6 +57,19 @@ function init(server) {
         content,
         timestamp,
       });
+    });
+
+    // removed get_user_list handler
+
+    // Allow clients to explicitly leave a session room
+    socket.on("leave_session", (sessionId) => {
+      try {
+        socket.leave(sessionId);
+        const numClients = getNumberOfClientsInRoom(sessionId);
+        ioInstance
+          .to(sessionId)
+          .emit("user_count_updated", { userCount: numClients });
+      } catch (e) {}
     });
 
     socket.on("disconnect", () => {
@@ -62,6 +87,8 @@ function init(server) {
           ioInstance
             .to(sessionId)
             .emit("user_count_updated", { userCount: numClients });
+
+          // no usernames event
         }
       });
     });

@@ -111,10 +111,9 @@ const fetchCartItems = async (req, res) => {
       ? await Cart.findOne({ session_id: sessionId })
       : await Cart.findOne({ userId });
 
-    if (!cart)
-      return res
-        .status(404)
-        .json({ success: false, message: "Cart not found" });
+    if (!cart) {
+      return res.status(200).json({ success: true, data: { items: [] } });
+    }
 
     // **Session Existence Check**
     if (cart.session_id) {

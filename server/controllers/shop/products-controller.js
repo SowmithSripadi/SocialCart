@@ -3,17 +3,28 @@ const Product = require("../../models/product");
 
 const getFilteredProducts = async (req, res) => {
   try {
-    const { Category = "", Brand = "", sortBy = "price-lowtohigh" } = req.query;
+    // Support both lowercase (new) and uppercase (legacy) query keys
+    const categoryParam = req.query.category || req.query.Category || "";
+    const brandParam = req.query.brand || req.query.Brand || "";
+    const { sortBy = "price-lowtohigh" } = req.query;
+    const featuredParam = req.query.featured;
+    const limitParam = req.query.limit ? parseInt(req.query.limit, 10) : null;
     let filters = {};
 
     // Set up category filter if category is provided
-    if (Category.length) {
-      filters.category = { $in: Category.split(",") };
+    if (categoryParam && categoryParam.length) {
+      filters.category = { $in: String(categoryParam).split(",") };
     }
 
     // Set up brand filter if brand is provided
-    if (Brand.length) {
-      filters.brand = { $in: Brand.split(",") };
+    if (brandParam && brandParam.length) {
+      filters.brand = { $in: String(brandParam).split(",") };
+    }
+
+    // Featured filter
+    if (typeof featuredParam !== "undefined" && featuredParam !== "") {
+      const isFeatured = String(featuredParam).toLowerCase() === "true";
+      filters.isFeatured = isFeatured;
     }
 
     // Sorting logic based on sortBy parameter
@@ -37,7 +48,11 @@ const getFilteredProducts = async (req, res) => {
     }
 
     // Fetch products from database based on filters and sort order
-    const products = await Product.find(filters).sort(sort);
+    let query = Product.find(filters).sort(sort);
+    if (Number.isInteger(limitParam) && limitParam > 0) {
+      query = query.limit(limitParam);
+    }
+    const products = await query;
 
     // Send response with product data
     res.status(200).json({

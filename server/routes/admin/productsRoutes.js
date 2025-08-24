@@ -8,11 +8,11 @@ const {
   deleteProdcut,
 } = require("../../controllers/admin/products-controller");
 
-const { uploads } = require("../../config/cloudinary");
+const { upload } = require("../../helpers/cloudinary");
 
 const router = express.Router();
 
-router.post("/uploadImage", uploads.single("myFile"), handleImageUpload);
+router.post("/uploadImage", upload.single("myFile"), handleImageUpload);
 router.post("/add", addProduct);
 router.put("/edit/:id", editProduct);
 router.delete("/delete/:id", deleteProdcut);
