@@ -1,23 +1,23 @@
 import React, { useEffect } from "react";
-import io from "socket.io-client";
+import { socket } from "@/lib/socket";
 import { useDispatch, useSelector } from "react-redux";
-import { updateSessionCartItems } from "@/store/shop/cart-slice";
-import { updateUserCount } from "@/store/shop/cart-slice";
+import { updateSessionCartItems, updateUserCount, clearSessionId } from "@/store/shop/cart-slice";
+import { clearSession } from "@/store/shop/session-slice";
 
-const BASE_URL = import.meta.env.VITE_BACKEND_URL;
-
-const socket = io(`${BASE_URL}`, {
-  transports: ["websocket"],
-  withCredentials: true,
-});
+// shared socket instance
 
 const CollaborativeCartProvider = ({ children }) => {
   const dispatch = useDispatch();
   const { sessionId } = useSelector((state) => state.collabSlice);
+  const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
     if (sessionId) {
-      socket.emit("join_session", sessionId);
+      socket.emit("join_session", {
+        sessionId,
+        userId: user?.id,
+        userName: user?.name,
+      });
 
       socket.on("cart_updated", (data) => {
         dispatch(updateSessionCartItems(data.items));
@@ -26,6 +26,14 @@ const CollaborativeCartProvider = ({ children }) => {
       socket.on("user_count_updated", (data) => {
         dispatch(updateUserCount(data.userCount));
       });
+
+      socket.on("session_ended", () => {
+        dispatch(clearSessionId());
+        dispatch(clearSession());
+      });
+
+      // Ask for the current user list when we join
+      socket.emit("get_user_list", sessionId);
     }
 
     return () => {
@@ -33,9 +41,10 @@ const CollaborativeCartProvider = ({ children }) => {
         socket.emit("leave_session", sessionId);
         socket.off("cart_updated");
         socket.off("user_count_updated");
+        socket.off("session_ended");
       }
     };
-  }, [sessionId, dispatch]);
+  }, [sessionId, user?.id, user?.name, dispatch]);
 
   return <>{children}</>;
 };

@@ -10,7 +10,7 @@ function CheckAuth({ props, children }) {
     !location.pathname.includes("/login") &&
     !location.pathname.includes("/register")
   ) {
-    return <Navigate to="/auth/login" />;
+    return <Navigate to="/auth/login" state={{ from: location }} replace />;
   }
 
   if (

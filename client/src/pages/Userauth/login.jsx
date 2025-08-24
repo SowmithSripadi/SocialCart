@@ -5,7 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { loginUser } from "@/store/Userauth-slice";
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const initialState = {
   email: "",
@@ -17,6 +17,8 @@ function Login() {
   const dispatch = useDispatch();
   const { toast } = useToast();
   const [isTestUser, setIsTestUser] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleTestUserLogin = () => {
     setFormData({
@@ -32,6 +34,8 @@ function Login() {
         toast({
           title: data?.payload?.message,
         });
+        const redirectTo = location.state?.from?.pathname || "/shop/home";
+        navigate(redirectTo, { replace: true });
       } else {
         toast({
           title: data?.payload?.message,

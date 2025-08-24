@@ -1,4 +1,4 @@
-export const registerFromControls = [
+export const registerFormControls = [
   {
     name: "userName",
     label: "User Name",
@@ -22,7 +22,7 @@ export const registerFromControls = [
   },
 ];
 
-export const loginFromControls = [
+export const loginFormControls = [
   {
     name: "email",
     label: "Email",
@@ -38,6 +38,10 @@ export const loginFromControls = [
     type: "password",
   },
 ];
+
+// Backward-compatible aliases for existing imports
+export const registerFromControls = registerFormControls;
+export const loginFromControls = loginFormControls;
 
 export const addProductFormElements = [
   {
@@ -103,6 +107,15 @@ export const addProductFormElements = [
     type: "number",
     placeholder: "Enter total stock",
   },
+  {
+    label: "Featured",
+    name: "isFeatured",
+    componentType: "select",
+    options: [
+      { id: "true", label: "Yes" },
+      { id: "false", label: "No" },
+    ],
+  },
 ];
 
 export const shoppingViewHeaderMenuItems = [
@@ -110,6 +123,11 @@ export const shoppingViewHeaderMenuItems = [
     id: "home",
     label: "Home",
     path: "/shop/home",
+  },
+  {
+    id: "products",
+    label: "Products",
+    path: "/shop/listing",
   },
   {
     id: "men",
@@ -127,14 +145,19 @@ export const shoppingViewHeaderMenuItems = [
     path: "/shop/listing",
   },
   {
+    id: "footwear",
+    label: "Footwear",
+    path: "/shop/listing",
+  },
+  {
     id: "accessories",
     label: "Accessories",
     path: "/shop/listing",
   },
   {
-    id: "footware",
-    label: "Footware",
-    path: "/shop/listing",
+    id: "search",
+    label: "Search",
+    path: "/shop/search",
   },
 ];
 
@@ -160,14 +183,14 @@ export const brandOptionsMap = {
 };
 
 export const filterOptions = {
-  Category: [
+  category: [
     { id: "men", label: "Men" },
     { id: "women", label: "Women" },
     { id: "kids", label: "Kids" },
     { id: "accessories", label: "Accessories" },
     { id: "footwear", label: "Footwear" },
   ],
-  Brand: [
+  brand: [
     { id: "flexora", label: "Flexora" },
     { id: "stridepeak", label: "StridePeak" },
     { id: "velvio", label: "Velvio" },

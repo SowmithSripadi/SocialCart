@@ -1,15 +1,15 @@
-import Login from "./Userauth/login";
-import Register from "./Userauth/register";
-import AdminDashboard from "./admin/dashboard";
-import AdminFeatures from "./admin/features";
-import AdminOrders from "./admin/orders";
-import AdminProducts from "./admin/products";
-import ShoppingAccount from "./UserShopping/ShoppingAccount";
-import ShoppingCheckout from "./UserShopping/ShoppingCheckout";
-import ShoppingHome from "./UserShopping/ShoppingHome";
-import Shoppinglisting from "./UserShopping/Shoppinglisting";
-import UnAuth from "./Userauth/UnAuth";
-import NotFound from "./Userauth/NotFound";
+import Login from "./auth/login";
+import Register from "./auth/register";
+import AdminDashboard from "./admin-view/dashboard";
+import AdminFeatures from "./admin-view/features";
+import AdminOrders from "./admin-view/orders";
+import AdminProducts from "./admin-view/products";
+import ShoppingAccount from "./shopping-view/account";
+import ShoppingCheckout from "./shopping-view/checkout";
+import ShoppingHome from "./shopping-view/home";
+import Shoppinglisting from "./shopping-view/listing";
+import UnAuth from "../pages/unauth/index";
+import NotFound from "../pages/not-found/index";
 import JoinSession from "./UserSharedCart/joinSession";
 
 export {

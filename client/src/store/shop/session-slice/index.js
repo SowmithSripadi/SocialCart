@@ -5,12 +5,11 @@ const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL;
 // Async thunk to handle session creation
 export const createSession = createAsyncThunk(
   "collaborativeSession/createSession",
-  async (userId, { rejectWithValue }) => {
+  async ({ userId }, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${API_BASE_URL}/session/create`,
-        userId
-      );
+      const response = await axios.post(`${API_BASE_URL}/session/create`, {
+        userId,
+      });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data.message || error.message);
@@ -40,6 +39,24 @@ export const fetchSession = createAsyncThunk(
   async ({ userId }) => {
     const response = await axios.get(`${API_BASE_URL}/session/get`, {
       params: { userId },
+    });
+    return response.data;
+  }
+);
+
+export const endSession = createAsyncThunk(
+  "collaborativeSession/endSession",
+  async ({ userId }) => {
+    const response = await axios.post(`${API_BASE_URL}/session/end`, { userId });
+    return response.data;
+  }
+);
+
+export const leaveSession = createAsyncThunk(
+  "collaborativeSession/leaveSession",
+  async ({ userId }) => {
+    const response = await axios.post(`${API_BASE_URL}/session/leave`, {
+      userId,
     });
     return response.data;
   }
@@ -108,6 +125,13 @@ const collaborativeSessionSlice = createSlice({
       .addCase(fetchSession.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(endSession.fulfilled, (state) => {
+        state.sessionId = null;
+        state.sessionLink = null;
+      })
+      .addCase(leaveSession.fulfilled, (state) => {
+        state.sessionId = null;
       });
   },
 });

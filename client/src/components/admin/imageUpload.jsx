@@ -12,9 +12,9 @@ function ProductImageUpload({
   className,
   imageFile,
   setImageFile,
-  uploadedImageURL,
-  setUploadedImageURL,
-  setimageLoadingState,
+  uploadedImageUrl,
+  setUploadedImageUrl,
+  setImageLoadingState,
   imageLoadingState,
   isEditMode,
 }) {
@@ -39,7 +39,7 @@ function ProductImageUpload({
   };
 
   async function uploadImageToCloudinary() {
-    setimageLoadingState(true);
+    setImageLoadingState(true);
     const data = new FormData();
     data.append("myFile", imageFile);
 
@@ -50,8 +50,8 @@ function ProductImageUpload({
       );
 
       if (response?.data?.success) {
-        setUploadedImageURL(response.data.result.url);
-        setimageLoadingState(false);
+        setUploadedImageUrl(response.data.result.url);
+        setImageLoadingState(false);
       }
     } catch (error) {
       console.error("Error uploading image:", error);
@@ -64,9 +64,7 @@ function ProductImageUpload({
 
   return (
     <div className={`w-full max-w-md mx-auto ${className}`}>
-      <label className="text-lg font-semibold mb-2 block">
-        {imageFile ? `Check uploaded Image` : `Upload Image`}
-      </label>
+      <label className="text-lg font-semibold mb-2 block">{imageFile ? `Check uploaded Image` : `Upload Image`}</label>
       <div
         className="border-2 border-dashed rounded-lg p-2"
         onDragOver={handleDragOver}

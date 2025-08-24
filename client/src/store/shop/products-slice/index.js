@@ -11,19 +11,24 @@ const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL;
 export const fetchAllFilteredProducts = createAsyncThunk(
   "/products/fetchAllFilteredProducts",
   async ({ filterParams, sortParams }) => {
-    const query = new URLSearchParams({
-      ...filterParams,
-      sortBy: sortParams,
-    });
+    const params = new URLSearchParams();
+    if (filterParams && typeof filterParams === "object") {
+      Object.entries(filterParams).forEach(([key, value]) => {
+        if (Array.isArray(value)) {
+          if (value.length) params.set(key, value.join(","));
+        } else if (value !== undefined && value !== null && value !== "") {
+          params.set(key, String(value));
+        }
+      });
+    }
+    params.set("sortBy", sortParams || "price-lowtohigh");
 
-    const result = await axios.get(
-      `${API_BASE_URL}/shop/products/get?${query}`
-    );
+    const result = await axios.get(`${API_BASE_URL}/shop/products/get?${params.toString()}`);
     return result?.data;
   }
 );
 
-export const fetchProdutDetails = createAsyncThunk(
+export const fetchProductDetails = createAsyncThunk(
   "/products/fetchProductDetails",
   async (id) => {
     const result = await axios.get(`${API_BASE_URL}/shop/products/get/${id}`);
@@ -50,13 +55,13 @@ const shoppingProductSlice = createSlice({
       .addCase(fetchAllFilteredProducts.rejected, (state, action) => {
         (state.isLoading = false), (state.productList = []);
       })
-      .addCase(fetchProdutDetails.pending, (state, action) => {
+      .addCase(fetchProductDetails.pending, (state, action) => {
         state.isLoading = true;
       })
-      .addCase(fetchProdutDetails.fulfilled, (state, action) => {
+      .addCase(fetchProductDetails.fulfilled, (state, action) => {
         (state.isLoading = false), (state.productDetails = action.payload.data);
       })
-      .addCase(fetchProdutDetails.rejected, (state, action) => {
+      .addCase(fetchProductDetails.rejected, (state, action) => {
         (state.isLoading = false), (state.productDetails = null);
       });
   },

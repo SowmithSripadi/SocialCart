@@ -1,44 +1,19 @@
-import {
-  createBrowserRouter,
-  createRoutesFromElements,
-  Route,
-  RouterProvider,
-  Routes,
-} from "react-router-dom";
-import {
-  AdminLayout,
-  UserAuthLayout,
-  UserShoppingLayout,
-  CheckAuth,
-} from "./components";
-import {
-  AdminOrders,
-  Login,
-  Register,
-  AdminDashboard,
-  AdminProducts,
-  ShoppingAccount,
-  ShoppingCheckout,
-  Shoppinglisting,
-  ShoppingHome,
-  UnAuth,
-  NotFound,
-  JoinSession,
-} from "./pages";
+import { Route, Routes, Navigate } from "react-router-dom";
+import { AdminLayout, UserAuthLayout, CheckAuth, CollaborativeCartProvider, ShoppingLayout } from "./components";
+import { AdminOrders, Login, Register, AdminDashboard, AdminProducts, ShoppingAccount, ShoppingCheckout, Shoppinglisting, ShoppingHome, UnAuth, NotFound, JoinSession, AdminFeatures } from "./pages";
+import SearchProducts from "./pages/shopping-view/search";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { checkIfUserLoggedIn } from "./store/Userauth-slice/index";
-import { CollaborativeCartProvider } from "./components";
-import { Navigate } from "react-router-dom";
+import { checkAuth } from "./store/auth-slice";
+import PaypalReturnPage from "./pages/shopping-view/paypal-return";
+import PaymentSuccessPage from "./pages/shopping-view/payment-success";
 
 function App() {
-  const { isAuthenticated, user, isLoading } = useSelector(
-    (state) => state.auth
-  );
+  const { isAuthenticated, user, isLoading } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(checkIfUserLoggedIn());
+    dispatch(checkAuth());
   }, [dispatch]);
   if (isLoading) return <div>Loading...</div>;
 
@@ -46,16 +21,7 @@ function App() {
     <CollaborativeCartProvider>
       <div className="flex flex-col overflow-hidden bg-white">
         <Routes>
-          <Route
-            path="/"
-            element={
-              isAuthenticated ? (
-                <Navigate to="/shop/home" replace />
-              ) : (
-                <Navigate to="/auth/login" replace />
-              )
-            }
-          />
+          <Route path="/" element={isAuthenticated ? <Navigate to="/shop/home" replace /> : <Navigate to="/auth/login" replace />} />
 
           <Route
             path="/auth"
@@ -68,6 +34,7 @@ function App() {
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />
           </Route>
+
           <Route
             path="/admin"
             element={
@@ -79,12 +46,14 @@ function App() {
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="products" element={<AdminProducts />} />
             <Route path="orders" element={<AdminOrders />} />
+            <Route path="features" element={<AdminFeatures />} />   
           </Route>
+
           <Route
             path="/shop"
             element={
               <CheckAuth props={{ isAuthenticated, user }}>
-                <UserShoppingLayout />
+                <ShoppingLayout />
               </CheckAuth>
             }
           >
@@ -92,7 +61,11 @@ function App() {
             <Route path="listing" element={<Shoppinglisting />} />
             <Route path="checkout" element={<ShoppingCheckout />} />
             <Route path="account" element={<ShoppingAccount />} />
+            <Route path="paypal-return" element={<PaypalReturnPage />} />
+            <Route path="payment-success" element={<PaymentSuccessPage />} />
+            <Route path="search" element={<SearchProducts />} />
           </Route>
+
           <Route
             path="/shop/session/join/:sessionId"
             element={
